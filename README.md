@@ -2,15 +2,13 @@
 
 ### Jude's Neural Operations Assistant
 
-<p align="center">
-
 **A futuristic AI assistant interface exploring AI, automation, command orchestration, voice interaction, and human-computer interaction.**
 
-<br><br>
+<p align="center">
 
 <a href="https://judereyes.github.io/JUNO-Live-Demo/">
 
-🚀 <strong>LAUNCH LIVE JUNO DEMO</strong>
+<strong>🚀 LAUNCH LIVE JUNO DEMO</strong>
 
 </a>
 
@@ -33,7 +31,7 @@ The project serves as:
 - 💼 A technical portfolio project
 - 🔬 A learning environment for AI and automation
 
-The long-term concept is:
+The core concept is:
 
 ```text
 AI Intelligence
@@ -47,17 +45,15 @@ Structured Context
 Human-Friendly Interface
        ↓
       JUNO
+      🚀 Live Demo
 
-🚀 Live Demo
-<p align="center"> <a href="https://judereyes.github.io/JUNO-Live-Demo/">
+Experience JUNO directly in your browser:
 
-<strong>⚡ EXPERIENCE JUNO LIVE</strong>
+👉 https://judereyes.github.io/JUNO-Live-Demo/
 
-</a> </p>
+The public demo showcases the visual and interactive frontend experience of JUNO.
 
-The public demo presents the visual and interactive frontend experience of JUNO directly in the browser.
-
-The demo showcases
+Demo Features
 🧠 Animated neural visualization
 🖥️ Futuristic HUD interface
 💬 Command console
@@ -83,9 +79,10 @@ Digital command centers
 Mission control systems
 Human-machine interaction
 
-The design is focused on both visual identity and usability.
+The design focuses on both visual identity and usability.
 
 Design Principles
+
 READABILITY
      ↓
 INFORMATION HIERARCHY
@@ -96,11 +93,12 @@ CONTROLLED ANIMATION
      ↓
 INTERACTIVE EXPERIENCE
 
-The goal is not simply to create a futuristic interface.
+The objective is not simply to create a futuristic interface.
 
-The goal is to explore how a complex AI system can present information in a way that remains clear, organized, and understandable.
+The goal is to explore how a complex AI system can present information in a clear, organized, and understandable way.
 
 ✨ Interface Features
+
 | Feature                 | Purpose                          |
 | ----------------------- | -------------------------------- |
 | 🧠 Neural Visualization | Central JUNO visual identity     |
@@ -116,42 +114,43 @@ The goal is to explore how a complex AI system can present information in a way 
 🏗️ System Architecture
 
 The Live Demo represents the frontend experience of a larger JUNO architecture.
-                         ┌─────────────────────────┐
-                         │          JUNO           │
-                         │ Neural Operations       │
-                         │       Assistant         │
-                         └────────────┬────────────┘
-                                      │
-                                      ▼
-                         ┌─────────────────────────┐
-                         │     USER INTERFACE      │
-                         │                         │
-                         │  Futuristic HUD         │
-                         │  Command Console        │
-                         │  Voice Controls         │
-                         │  System Panels          │
-                         │  Work Modes             │
-                         └────────────┬────────────┘
-                                      │
-                                      ▼
-                         ┌─────────────────────────┐
-                         │     COMMAND LAYER       │
-                         │                         │
-                         │  Command Routing        │
-                         │  Tool Registry          │
-                         │  State Management       │
-                         └────────────┬────────────┘
-                                      │
-                    ┌─────────────────┼─────────────────┐
-                    │                 │                 │
-                    ▼                 ▼                 ▼
-             ┌────────────┐   ┌────────────┐   ┌────────────┐
-             │ AI SERVICE │   │   TOOLS    │   │   MEMORY   │
-             │            │   │            │   │            │
-             │ AI APIs    │   │ Calculator │   │ Structured │
-             │ Responses  │   │ Launcher   │   │ Context    │
-             │            │   │ System     │   │            │
-             └────────────┘   └────────────┘   └────────────┘
+
+                    ┌───────────────────────┐
+                    │        JUNO           │
+                    │ Neural Operations     │
+                    │ Assistant             │
+                    └───────────┬───────────┘
+                                │
+                                ▼
+                    ┌───────────────────────┐
+                    │    USER INTERFACE     │
+                    │                       │
+                    │ Futuristic HUD         │
+                    │ Command Console        │
+                    │ Voice Controls         │
+                    │ System Panels          │
+                    │ Work Modes             │
+                    └───────────┬───────────┘
+                                │
+                                ▼
+                    ┌───────────────────────┐
+                    │    COMMAND LAYER      │
+                    │                       │
+                    │ Command Routing       │
+                    │ Tool Registry         │
+                    │ State Management      │
+                    └───────────┬───────────┘
+                                │
+                 ┌──────────────┼──────────────┐
+                 ▼              ▼              ▼
+          ┌────────────┐ ┌────────────┐ ┌────────────┐
+          │ AI SERVICE │ │   TOOLS    │ │   MEMORY   │
+          │            │ │            │ │            │
+          │ AI APIs    │ │ Calculator │ │ Structured │
+          │ Responses  │ │ Launcher   │ │ Context    │
+          │            │ │ System     │ │            │
+          └────────────┘ └────────────┘ └────────────┘
+
 This architecture allows JUNO to evolve from a simple assistant interface into a modular AI system.
 
 🧩 Main JUNO Architecture
@@ -161,7 +160,6 @@ The main JUNO repository uses a modular Python service architecture.
 JUNO/
 │
 ├── app/
-│   │
 │   ├── main.py
 │   │
 │   ├── config/
@@ -193,6 +191,7 @@ The modular structure allows individual services to be developed, tested, replac
 🤖 AI Service
 
 Handles AI-related functionality and integration with AI providers.
+
 User Input
     ↓
 Command Layer
@@ -208,6 +207,7 @@ JUNO Interface
 🎯 Command Service
 
 Acts as the routing layer for JUNO.
+
 User Command
      ↓
 Command Parser
@@ -253,41 +253,39 @@ HTML5
 CSS3
 JavaScript
 Responsive UI
-Custom HUD Interface
+Custom HUD interface
 Web Speech API
 
 Backend
 
 Python
 Flask
-Modular Python Services
-Command Routing
-Tool Registry
-State Management
-Memory Services
-System Services
+Modular Python services
+Command routing
+Tool registry
+State management
+Memory services
+System services
 
 AI & Automation
 
-AI API Integration
-AI-Assisted Workflows
-Command Orchestration
-Tool-Based Architecture
-Structured Context Management
-Automation Experimentation
+AI API integration
+AI-assisted workflows
+Command orchestration
+Tool-based architecture
+Structured context management
+Automation experimentation
 
 Development
 
 Git
 GitHub
 VS Code
-Python Virtual Environment
-AI-Assisted Development
-Local Development Environment
+Python virtual environment
+AI-assisted development
+Local development environment
 
 🎯 Engineering Focus
-
-JUNO is being developed around several practical engineering concepts.
 
 🤖 AI Integration
 
@@ -298,21 +296,19 @@ The objective is to move beyond a simple chatbot interface toward a system where
 🧩 Tool Orchestration
 
 Routing user requests to specialized services.
-                    USER
-                     │
-                     ▼
-               COMMAND INPUT
-                     │
-                     ▼
-              COMMAND ROUTER
-                     │
-        ┌────────────┼────────────┐
-        ▼            ▼            ▼
-   AI SERVICE    SYSTEM TOOL   CALCULATOR
-        │            │            │
-        └────────────┼────────────┘
-                     ▼
-                  RESPONSE
+
+USER
+  ↓
+COMMAND INPUT
+  ↓
+COMMAND ROUTER
+  ↓
+┌─────────────┬─────────────┬─────────────┐
+↓             ↓             ↓
+AI SERVICE    SYSTEM TOOL   CALCULATOR
+└─────────────┴─────────────┴─────────────┘
+  ↓
+RESPONSE
 
 ⚙️ Automation
 
@@ -334,7 +330,6 @@ Command feedback
 Voice interaction
 Structured panels
 Contextual information
-
 🔐 Security & Privacy
 
 Sensitive information should never be committed directly to a public repository.
@@ -353,11 +348,7 @@ The project is designed to keep the following outside version control:
 Never place API keys, passwords, private credentials, or sensitive personal information inside public frontend code or repositories.
 
 🧪 Development Status
-<p align="center">
-
 🟢 ACTIVE DEVELOPMENT
-
-</p>
 
 JUNO is an evolving prototype and technical portfolio project.
 
@@ -366,7 +357,6 @@ It is not currently presented as a finished commercial product.
 The architecture, interface, services, and integrations may continue to change as development progresses.
 
 Current Development Areas
-
 AI integration
 Command orchestration
 Voice interaction
@@ -426,6 +416,7 @@ Application portability
 📂 Live Demo Repository
 
 The public demo is intentionally lightweight.
+
 JUNO-Live-Demo/
 │
 ├── index.html
@@ -445,6 +436,7 @@ The full JUNO development architecture is maintained separately.
 | 💼 Portfolio            | [Jude Reyes — Technical Virtual Assistant](https://jude-va-portfolio.lovable.app) |
 | 🔗 LinkedIn             | [Jude Reyes](https://www.linkedin.com/in/judereyes0618)                           |
 | 🐙 GitHub               | [JudeReyes](https://github.com/JudeReyes)                                         |
+
 
 👨‍💻 Developer
 Jude Reyes
@@ -518,9 +510,9 @@ AI • Automation • Tools • Interaction
 
 <br><br>
 
-Designed & Built by Jude Reyes
+<strong>Designed & Built by Jude Reyes</strong>
 
-<br>
+<br><br>
 
 Technical Virtual Assistant
 Workflow Automation • AI Tools • Web Development
@@ -529,4 +521,4 @@ Workflow Automation • AI Tools • Web Development
 
 ⭐ Explore the repository and follow JUNO's development.
 
-</p> ```
+</p>
