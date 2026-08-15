@@ -334,3 +334,90 @@ Sensitive personal memory data is kept outside the public repository.
 - Local development environment
 
 ---
+
+## 🎯 Engineering Focus
+
+JUNO is being developed around several practical software and AI engineering concepts.
+
+### 🤖 AI Integration
+
+Connecting AI services to a custom application and command architecture.
+
+The objective is to move beyond a simple chatbot interface toward a system where AI can interact with specialized capabilities.
+
+### 🧩 Tool Orchestration
+
+Routing user requests to specialized services.
+
+```text
+USER
+  ↓
+COMMAND INPUT
+  ↓
+COMMAND ROUTER
+  ↓
+┌─────────────┬─────────────┬─────────────┐
+↓             ↓             ↓
+AI SERVICE    SYSTEM TOOL   CALCULATOR
+└─────────────┴─────────────┴─────────────┘
+  ↓
+RESPONSE
+```
+
+This approach provides a foundation for connecting different tools to a centralized assistant.
+
+### ⚙️ Automation
+
+JUNO explores how AI can assist with repetitive digital operations and workflow-based tasks.
+
+Future development may connect JUNO with:
+
+- External APIs
+- Productivity systems
+- Automation platforms
+- Business workflows
+- Digital productivity tools
+
+### 🧠 Memory
+
+Structured memory is being explored as a foundation for maintaining useful assistant context.
+
+The goal is to allow JUNO to organize relevant information and use appropriate context when processing future interactions.
+
+### 🖥️ Human-Computer Interaction
+
+JUNO explores how AI systems can communicate complex information through:
+
+- Visual hierarchy
+- Status indicators
+- Command feedback
+- Voice interaction
+- Structured panels
+- Contextual information
+
+The interface is therefore treated as part of the system architecture, not simply as visual decoration.
+
+---
+
+## 🔐 Security & Privacy
+
+Security is an important consideration throughout JUNO's development.
+
+Sensitive information should never be committed directly to a public repository.
+
+The project is designed to keep the following outside version control:
+
+- 🔑 API keys
+- 🔐 Environment variables
+- 🧠 Personal memory data
+- 🔒 Local credentials
+- 🐍 Virtual environments
+- 🗃️ Local databases
+- 🧪 Development backups
+- 💻 Local development artifacts
+
+> **Never place API keys, passwords, private credentials, or sensitive personal information inside public frontend code or repositories.**
+
+The `.gitignore` configuration is used to help prevent sensitive and unnecessary local files from being committed.
+
+---
