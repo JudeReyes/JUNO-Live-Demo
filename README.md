@@ -549,3 +549,97 @@ The project follows a **learning-by-building approach**.
 AI-assisted development tools are used to accelerate experimentation, research, debugging, and implementation while architectural decisions, testing, validation, and project direction remain part of the development process.
 
 ---
+
+## 💡 Why JUNO?
+
+JUNO started from a simple question:
+
+> **What if an AI assistant could become a practical operating layer for everyday digital work?**
+
+Instead of treating AI as only a conversational interface, JUNO explores a broader architecture where an assistant can potentially:
+
+```text
+UNDERSTAND
+    ↓
+DECIDE
+    ↓
+ROUTE
+    ↓
+EXECUTE
+    ↓
+REMEMBER
+    ↓
+RESPOND
+```
+
+This represents the long-term direction behind the project.
+
+---
+
+## ⚡ JUNO Vision
+
+The long-term goal is to evolve JUNO from a personal AI assistant prototype into a practical platform capable of supporting:
+
+- Technical virtual assistant operations
+- Workflow automation
+- Repetitive digital tasks
+- Productivity workflows
+- AI-assisted decision support
+- Tool orchestration
+- API-driven operations
+
+The project is intentionally being built incrementally.
+
+Each new service, interface improvement, automation, and integration contributes to the larger system.
+
+---
+
+## 🚀 What's Next?
+
+JUNO will continue evolving as new capabilities are explored and implemented.
+
+Future development will focus on improving:
+
+- AI reasoning and orchestration
+- Tool integration
+- Automation workflows
+- Structured memory
+- Voice interaction
+- API connectivity
+- Productivity features
+- Application portability
+
+The objective is to turn the prototype into a more capable and practical AI-assisted operating environment.
+
+---
+
+<div align="center">
+
+# ⚡ JUNO
+
+### Jude's Neural Operations Assistant
+
+**AI • Automation • Tools • Interaction**
+
+<br>
+
+<a href="https://judereyes.github.io/JUNO-Live-Demo/">
+
+<strong>🚀 EXPERIENCE JUNO LIVE</strong>
+
+</a>
+
+<br><br>
+
+<strong>Designed & Built by Jude Reyes</strong>
+
+<br><br>
+
+Technical Virtual Assistant  
+Workflow Automation • AI Tools • Web Development
+
+<br><br>
+
+⭐ Explore the repository and follow JUNO's development.
+
+</div>
