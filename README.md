@@ -16,6 +16,81 @@
 
 ---
 
+## 🧪 Development Status
+
+<p align="center">
+
+🟢 <strong>ACTIVE DEVELOPMENT</strong>
+
+</p>
+
+JUNO is an evolving prototype and technical portfolio project.
+
+It is not currently presented as a finished commercial product.
+
+The architecture, interface, services, and integrations may continue to change as development progresses.
+
+### Current Development Areas
+
+- AI integration
+- Command orchestration
+- Voice interaction
+- Automation tools
+- Memory architecture
+- System utilities
+- Error handling
+- UI/UX refinement
+- API integrations
+- Application portability
+
+---
+
+## 🗺️ Roadmap
+
+### ✅ Completed
+
+- [x] JUNO project foundation
+- [x] Modular Python architecture
+- [x] AI service foundation
+- [x] Command service
+- [x] Tool registry
+- [x] Calculator service
+- [x] System services
+- [x] Memory service foundation
+- [x] Futuristic JUNO interface
+- [x] Interactive HUD
+- [x] Command console
+- [x] Work-mode interface
+- [x] System status interface
+- [x] Voice interaction experimentation
+- [x] Public GitHub repository
+- [x] Public live demo
+- [x] GitHub Pages deployment
+
+### 🚧 In Development
+
+- [ ] Expanded AI orchestration
+- [ ] Advanced tool registry
+- [ ] Improved memory architecture
+- [ ] Expanded automation capabilities
+- [ ] More reliable command routing
+- [ ] Expanded voice functionality
+- [ ] Additional API integrations
+- [ ] Improved error recovery
+- [ ] More productivity tools
+- [ ] Improved application portability
+
+### 🔮 Future Direction
+
+- [ ] Multi-tool AI workflows
+- [ ] External API integrations
+- [ ] Advanced workflow automation
+- [ ] Persistent structured context
+- [ ] More autonomous task execution
+- [ ] Portable JUNO application
+- [ ] Expanded productivity ecosystem
+
+---
 ## 🧠 About JUNO
 
 **JUNO — Jude's Neural Operations Assistant** is a personal AI assistant project created by **Jude Reyes**.
