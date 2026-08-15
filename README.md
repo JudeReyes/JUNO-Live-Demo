@@ -496,3 +496,56 @@ The project is designed to keep the following outside version control:
 The `.gitignore` configuration is used to help prevent sensitive and unnecessary local files from being committed.
 
 ---
+
+## 📂 Live Demo Repository
+
+The public demo repository is intentionally lightweight and focused on the presentation layer of JUNO.
+
+```text
+JUNO-Live-Demo/
+│
+├── index.html
+├── README.md
+└── .github/
+```
+
+The Live Demo repository contains the public presentation and interactive frontend experience.
+
+The full JUNO development architecture is maintained separately in the main repository.
+
+---
+
+## 🔗 Project Links
+
+| Resource | Link |
+|---|---|
+| ⚡ Live JUNO Demo | [Launch Live Demo](https://judereyes.github.io/JUNO-Live-Demo/) |
+| 🧠 Main JUNO Repository | [GitHub — JUNO](https://github.com/JudeReyes/JUNO) |
+| 💼 Portfolio | [Jude Reyes — Technical Virtual Assistant](https://jude-va-portfolio.lovable.app) |
+| 🔗 LinkedIn | [Jude Reyes](https://www.linkedin.com/in/judereyes0618) |
+| 🐙 GitHub | [JudeReyes](https://github.com/JudeReyes) |
+
+---
+
+## 👨‍💻 Developer
+
+### Jude Reyes
+
+**Technical Virtual Assistant | Workflow Automation | AI Tools | Web Development**
+
+JUNO represents my hands-on exploration of:
+
+- Artificial intelligence
+- Workflow automation
+- Python development
+- Web development
+- API integration
+- System tools
+- Command orchestration
+- Human-computer interaction
+
+The project follows a **learning-by-building approach**.
+
+AI-assisted development tools are used to accelerate experimentation, research, debugging, and implementation while architectural decisions, testing, validation, and project direction remain part of the development process.
+
+---
