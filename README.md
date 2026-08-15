@@ -133,3 +133,88 @@ The goal is to explore how a complex AI system can present information in a **cl
 | 📱 Responsive Layout | Adaptation to different displays |
 
 ---
+
+## 🏗️ System Architecture
+
+The Live Demo represents the frontend experience of a larger JUNO architecture.
+
+```text
+                    ┌───────────────────────┐
+                    │        JUNO           │
+                    │ Neural Operations     │
+                    │ Assistant             │
+                    └───────────┬───────────┘
+                                │
+                                ▼
+                    ┌───────────────────────┐
+                    │    USER INTERFACE     │
+                    │                       │
+                    │ Futuristic HUD        │
+                    │ Command Console       │
+                    │ Voice Controls        │
+                    │ System Panels         │
+                    │ Work Modes            │
+                    └───────────┬───────────┘
+                                │
+                                ▼
+                    ┌───────────────────────┐
+                    │    COMMAND LAYER      │
+                    │                       │
+                    │ Command Routing       │
+                    │ Tool Registry         │
+                    │ State Management      │
+                    └───────────┬───────────┘
+                                │
+                 ┌──────────────┼──────────────┐
+                 ▼              ▼              ▼
+          ┌────────────┐ ┌────────────┐ ┌────────────┐
+          │ AI SERVICE │ │   TOOLS    │ │   MEMORY   │
+          │            │ │            │ │            │
+          │ AI APIs    │ │ Calculator │ │ Structured │
+          │ Responses  │ │ Launcher   │ │ Context    │
+          │            │ │ System     │ │            │
+          └────────────┘ └────────────┘ └────────────┘
+```
+
+This architecture allows JUNO to evolve from a simple assistant interface into a modular AI system.
+
+---
+
+## 🧩 Main JUNO Architecture
+
+The main JUNO repository uses a modular Python service architecture.
+
+```text
+JUNO/
+│
+├── app/
+│   ├── main.py
+│   │
+│   ├── config/
+│   │
+│   ├── services/
+│   │   ├── ai_service.py
+│   │   ├── calculator_service.py
+│   │   ├── command_service.py
+│   │   ├── gemini_service.py
+│   │   ├── help_service.py
+│   │   ├── launcher_service.py
+│   │   ├── memory_service.py
+│   │   ├── state_service.py
+│   │   ├── system_service.py
+│   │   ├── system_status_service.py
+│   │   └── tool_registry.py
+│   │
+│   ├── static/
+│   │   └── neural-humanoid.png
+│   │
+│   └── templates/
+│       └── index.html
+│
+├── .gitignore
+└── README.md
+```
+
+The modular structure allows individual services to be developed, tested, replaced, and expanded independently.
+
+---
