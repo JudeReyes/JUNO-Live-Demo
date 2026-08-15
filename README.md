@@ -1,127 +1,116 @@
-<div align="center">
-
 # ⚡ JUNO
 
-### Jude's Neural Operations Assistant
+<h3 align="center">Jude's Neural Operations Assistant</h3>
 
-**A futuristic AI assistant interface exploring AI, automation, command systems, voice interaction, and human-computer interaction.**
+<p align="center">
+  <strong>
+    A futuristic AI assistant project exploring intelligent automation,
+    command orchestration, voice interaction, system tools,
+    and human-computer interaction.
+  </strong>
+</p>
 
-<br>
+<p align="center">
 
-[![🚀 Launch JUNO Live Demo](https://img.shields.io/badge/🚀_LAUNCH_JUNO_LIVE_DEMO-00D9FF?style=for-the-badge)](https://judereyes.github.io/JUNO-Live-Demo/)
+<a href="https://judereyes.github.io/JUNO-Live-Demo/">
+  <strong>🚀 LAUNCH LIVE JUNO DEMO</strong>
+</a>
 
-[![Main Repository](https://img.shields.io/badge/⚙️_MAIN_JUNO_REPOSITORY-181717?style=for-the-badge&logo=github)](https://github.com/JudeReyes/JUNO)
+&nbsp;&nbsp;•&nbsp;&nbsp;
 
-<br>
+<a href="https://github.com/JudeReyes/JUNO">
+  🧠 MAIN REPOSITORY
+</a>
 
-![Status](https://img.shields.io/badge/Status-Active%20Development-00D9FF?style=flat-square)
-![Frontend](https://img.shields.io/badge/Frontend-HTML%20%7C%20CSS%20%7C%20JavaScript-1572B6?style=flat-square)
-![Hosting](https://img.shields.io/badge/Hosted%20with-GitHub%20Pages-181717?style=flat-square&logo=github)
+</p>
 
-</div>
+<p align="center">
+
+<img src="https://img.shields.io/badge/Status-Active%20Development-00ffcc?style=for-the-badge">
+<img src="https://img.shields.io/badge/Python-3.x-3776AB?style=for-the-badge&logo=python&logoColor=white">
+<img src="https://img.shields.io/badge/Flask-Backend-000000?style=for-the-badge&logo=flask">
+<img src="https://img.shields.io/badge/JavaScript-Frontend-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black">
+<img src="https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github">
+
+</p>
 
 ---
 
-## 🧠 About JUNO
+# 🧠 What is JUNO?
 
 **JUNO — Jude's Neural Operations Assistant** is a personal AI assistant project created by **Jude Reyes**.
 
-JUNO explores how AI, workflow automation, command routing, voice interaction, system tools, and human-centered interface design can work together inside a centralized digital assistant.
+JUNO explores how artificial intelligence, automation, command routing, system utilities, memory, voice interaction, and human-centered interface design can work together inside a centralized digital assistant.
 
-The project serves as:
+The project is being developed as:
 
-- 🤖 An AI assistant experiment
-- ⚙️ An automation learning environment
-- 🧩 A modular software architecture project
-- 🎨 A human-computer interaction experiment
+- 🤖 A personal AI assistant concept
+- ⚙️ An automation experimentation platform
+- 🧠 An AI application engineering project
+- 🛠️ A hands-on software development environment
 - 💼 A technical portfolio project
+- 🔬 A learning environment for AI and automation technologies
+
+JUNO is designed around the idea of combining **AI intelligence + specialized tools + automation + structured context + human-friendly interaction**.
 
 ---
 
-## 🚀 Live Demo
+# 🚀 Live JUNO Experience
 
-<div align="center">
+## ▶ Launch the Interactive Demo
 
-### Experience JUNO in your browser
+<p align="center">
 
-**[⚡ LAUNCH JUNO LIVE DEMO →](https://judereyes.github.io/JUNO-Live-Demo/)**
+<a href="https://judereyes.github.io/JUNO-Live-Demo/">
 
-</div>
+<img src="https://img.shields.io/badge/⚡%20LAUNCH%20LIVE%20JUNO%20DEMO-00ffcc?style=for-the-badge&labelColor=05070a">
 
-The live demo showcases the visual interface and interaction concept of JUNO, including its futuristic HUD, neural visualization, command console, system panels, work modes, and interactive controls.
+</a>
+
+</p>
+
+The public live demo showcases JUNO's futuristic interface and interaction concept directly in the browser.
+
+### The demo includes:
+
+- 🧠 Animated neural visualization
+- 🖥️ Futuristic HUD interface
+- 💬 Assistant command console
+- ⚙️ Work-mode interface
+- 📊 System information panels
+- 🎙️ Voice interaction interface
+- 🔮 Holographic visual elements
+- ⚡ Interactive controls
+- 📱 Responsive interface design
+
+> **The Live Demo is the presentation layer of JUNO.**
+>
+> The main JUNO repository contains the deeper Python service architecture and development system.
 
 ---
 
-## 🖥️ Interface
+# 🖥️ Interface Design
 
-JUNO's interface is inspired by:
+JUNO uses a custom futuristic HUD inspired by:
 
 - Neural networks
-- Holographic displays
+- Holographic interfaces
 - Intelligent operating systems
-- Command centers
+- Mission control systems
+- Digital command centers
 - Human-machine interaction
 
-The design philosophy is:
+The visual design is intentionally focused on **functionality as well as aesthetics**.
 
-> **Complex systems should still be easy for humans to understand.**
-
-The interface therefore emphasizes **readability, information hierarchy, controlled animation, and functional interaction** rather than visual effects alone.
-
----
-
-## ✨ Interface Features
-
-| Feature | Description |
-|---|---|
-| 🧠 Neural Visualization | Animated central JUNO visualization |
-| 🖥️ Futuristic HUD | Custom sci-fi inspired dashboard |
-| 💬 Command Console | Central assistant interaction area |
-| 🎙️ Voice Interaction | Browser-based voice interaction experience |
-| ⚙️ Work Modes | Structured operating modes |
-| 📊 System Status | Visual operational information |
-| 🔮 Holographic UI | Animated futuristic interface elements |
-| ⚡ Interactive Controls | Dynamic assistant controls |
-| 📱 Responsive Design | Interface designed for different screen sizes |
-
----
-
-## 🏗️ System Architecture
-
-The live demo represents the **frontend experience** of a larger JUNO system.
+### Design principles
 
 ```text
-                         ┌─────────────────────┐
-                         │        JUNO         │
-                         │ Neural Operations   │
-                         │      Assistant      │
-                         └──────────┬──────────┘
-                                    │
-                                    ▼
-                         ┌─────────────────────┐
-                         │    User Interface   │
-                         │                     │
-                         │  Futuristic HUD     │
-                         │  Command Console    │
-                         │  Voice Controls     │
-                         │  System Panels      │
-                         └──────────┬──────────┘
-                                    │
-                                    ▼
-                         ┌─────────────────────┐
-                         │   Command Layer     │
-                         │                     │
-                         │ Command Routing     │
-                         │ Tool Registry       │
-                         │ State Management    │
-                         └──────────┬──────────┘
-                                    │
-                 ┌──────────────────┼──────────────────┐
-                 ▼                  ▼                  ▼
-          ┌─────────────┐    ┌─────────────┐    ┌─────────────┐
-          │ AI Services │    │    Tools    │    │   Memory    │
-          │             │    │             │    │             │
-          │ AI APIs     │    │ Calculator  │    │ Structured  │
-          │ Responses   │    │ Launcher    │    │ Context     │
-          │             │    │ System      │    │             │
-          └─────────────┘    └─────────────┘    └─────────────┘
+READABILITY
+     ↓
+INFORMATION HIERARCHY
+     ↓
+FUNCTIONAL HUD COMPONENTS
+     ↓
+CONTROLLED ANIMATION
+     ↓
+INTERACTIVE EXPERIENCE
