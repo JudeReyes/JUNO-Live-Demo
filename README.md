@@ -218,3 +218,119 @@ JUNO/
 The modular structure allows individual services to be developed, tested, replaced, and expanded independently.
 
 ---
+
+## ⚙️ Core Services
+
+JUNO is organized around specialized services that separate responsibilities and make the system easier to expand.
+
+### 🤖 AI Service
+
+Handles AI-related functionality and integration with AI providers.
+
+```text
+User Input
+    ↓
+Command Layer
+    ↓
+AI Service
+    ↓
+AI Provider
+    ↓
+Response
+    ↓
+JUNO Interface
+```
+
+### 🎯 Command Service
+
+Acts as the routing layer for JUNO.
+
+```text
+User Command
+     ↓
+Command Parser
+     ↓
+Command Router
+     ↓
+Specialized Service
+     ↓
+Result
+```
+
+The command layer provides a foundation for routing different types of requests to the appropriate service.
+
+### 🧰 Tool Registry
+
+Provides a centralized structure for JUNO's available tools.
+
+Examples include:
+
+- Calculator
+- Application launcher
+- System information
+- Help system
+- Memory
+- AI services
+- Automation utilities
+
+The goal is to make tools easier to register, manage, and expand as JUNO develops.
+
+### 🧠 Memory Service
+
+Provides a foundation for structured assistant context.
+
+```text
+STORE
+  ↓
+ORGANIZE
+  ↓
+RETRIEVE
+  ↓
+USE CONTEXT
+```
+
+Sensitive personal memory data is kept outside the public repository.
+
+---
+
+## 🛠️ Technology Stack
+
+### Frontend
+
+- HTML5
+- CSS3
+- JavaScript
+- Responsive UI
+- Custom HUD interface
+- Web Speech API
+
+### Backend
+
+- Python
+- Flask
+- Modular Python services
+- Command routing
+- Tool registry
+- State management
+- Memory services
+- System services
+
+### AI & Automation
+
+- AI API integration
+- AI-assisted workflows
+- Command orchestration
+- Tool-based architecture
+- Structured context management
+- Automation experimentation
+
+### Development
+
+- Git
+- GitHub
+- VS Code
+- Python virtual environment
+- AI-assisted development
+- Local development environment
+
+---
