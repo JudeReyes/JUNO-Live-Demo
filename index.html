@@ -9885,6 +9885,21 @@ function junoHandleQuickCommand(command){
         return true;
     }
 
+    // Basic Filipino/Tagalog quick replies for the portfolio demo.
+    if(/\\b(kilala mo ba ako|kilala mo ba ko|do you know me)\\b/i.test(lower)){
+        const reply = "Sa ngayon, ang alam ko lang ay ang impormasyong ibinabahagi mo sa usapang ito. Portfolio demo ito, kaya wala akong konektadong personal database o permanenteng memory ng mga user. Maaari kitang tulungan batay sa impormasyong ibibigay mo.";
+        addMessage("JUNO: " + reply, "juno");
+        speakText(reply);
+        return true;
+    }
+
+    if(/\\b(pwede|puwede|maaari)\\b.*\\b(tagalog|filipino)\\b|\\b(mag(tagalog|filipino)|tagalog tayo|filipino tayo)\\b/i.test(lower)){
+        const reply = "Oo naman! Maaari akong sumagot sa Tagalog o Taglish. Paalala: limitado pa ang mga naka-program na Tagalog command sa portfolio demo na ito; hindi pa ito full AI conversation.";
+        addMessage("JUNO: " + reply, "juno");
+        speakText(reply);
+        return true;
+    }
+
     const searchIntent = /\b(search|find|look for|look up|what about|tell me about|show me|give me|list|name)\b/i.test(lower);
     const companyIntent = /\b(compan(?:y|ies)|employer|business(?:es)?|aerospace|aircraft|aviation|manufacturer|manufacturing|factory|supplier)\b/i.test(lower);
     const jobIntent = /\b(job listings|job openings|vacanc(?:y|ies)|available jobs|hiring|production jobs|operator jobs)\b/i.test(lower);
