@@ -10067,7 +10067,7 @@ function junoAdditionalIntentReply(command){
 
 function junoHandleQuickCommand(command){
     const raw = String(command || "").trim();
-    const lower = raw.toLowerCase().replace(/^(hey\\s+)?(juno|google)[,\\s]+/i, "").trim();
+    const lower = raw.toLowerCase().replace(/^(hey\s+)?(juno|google)[,\s]+/i, "").trim();
 
     const sites = {
         youtube: "https://www.youtube.com/",
@@ -10077,10 +10077,11 @@ function junoHandleQuickCommand(command){
         linkedin: "https://www.linkedin.com/"
     };
 
-    const openMatch = lower.match(/\\b(?:open|go to|launch|visit)\\s+(youtube|google|gmail|facebook|linkedin)\\b/i);
+    const openMatch = lower.match(/\b(?:open|go to|launch|visit)\s+(youtube|google|gmail|facebook|linkedin)\b/i);
     if(openMatch){
         const site = openMatch[1].toLowerCase();
-        const openedWindow = window.open(sites[site], "_blank", "noopener,noreferrer");
+        const openedWindow = window.open(sites[site], "_blank");
+        if(openedWindow){ try{ openedWindow.opener = null; }catch(error){} }
         addMessage("JUNO: Opening " + site.toUpperCase() + ".", "juno");
         speakText("Opening " + site + ".");
         if(!openedWindow){
@@ -10089,7 +10090,7 @@ function junoHandleQuickCommand(command){
         return true;
     }
 
-    if(/\\b(who (?:built|created|made|developed) you|who is your (?:creator|developer)|sino ang gumawa sa iyo|sino gumawa sa iyo)\\b/i.test(lower)){
+    if(/\b(who (?:built|created|made|developed) you|who is your (?:creator|developer)|sino ang gumawa sa iyo|sino gumawa sa iyo)\b/i.test(lower)){
         const reply = "I'm JUNO — Jude's Neural Operations Assistant. I was designed and built by Jude Reyes as a portfolio project exploring conversational AI, voice interaction, workflow support and human-computer interaction.";
         addMessage("JUNO: " + reply, "juno");
         speakText(reply);
@@ -10139,7 +10140,7 @@ async function junoRequestAI(text){
     const activeMode = String(window.__junoActiveMode || "GENERAL").toUpperCase();
     const modeContext = activeMode === "GENERAL"
         ? text
-        : "[Active JUNO workspace: " + activeMode + ". Use this as helpful context, but do not restrict the conversation to this mode.]\\n\\nUser request: " + text;
+        : "[Active JUNO workspace: " + activeMode + ". Use this as helpful context, but do not restrict the conversation to this mode.]\n\nUser request: " + text;
 
     const outgoingMessages = [
         ...junoConversationHistory,
@@ -10983,7 +10984,7 @@ window.selectJunoMode=function(mode){ window.__junoActiveMode=mode; return _sele
         }
 
         if(stagedFile){
-          const supportedTextFile = /\\.(txt|md|csv|json|log)$/i.test(stagedFile.name) ||
+          const supportedTextFile = /\.(txt|md|csv|json|log)$/i.test(stagedFile.name) ||
             (stagedFile.type && stagedFile.type.startsWith("text/"));
 
           if(!supportedTextFile){
@@ -10996,9 +10997,9 @@ window.selectJunoMode=function(mode){ window.__junoActiveMode=mode; return _sele
           const fileText = await stagedFile.text();
           const task = command || "Please review and summarize the attached text file.";
           const attachmentPrompt = task +
-            "\\n\\n[Attached text file: " + stagedFile.name + "]\\n" +
+            "\n\n[Attached text file: " + stagedFile.name + "]\n" +
             fileText.slice(0, 14000) +
-            (fileText.length > 14000 ? "\\n[The remaining file text was omitted because of the demo input limit.]" : "");
+            (fileText.length > 14000 ? "\n[The remaining file text was omitted because of the demo input limit.]" : "");
 
           if(typeof addMessage === "function"){
             addMessage("YOU: " + task + " [Attachment: " + stagedFile.name + "]", "you");
