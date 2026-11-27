@@ -10117,10 +10117,10 @@ async function speakText(text){
 
     const englishVoices = voices.filter(voice => /^en([_-]|$)/i.test(voice.lang));
     const maleVoicePatterns = [
-        /microsoft.*\\b(david|mark|guy|christopher|eric)\\b/i,
-        /\\b(david|mark|guy|james|daniel|alex|george|richard)\\b/i
+        /microsoft.*\b(david|mark|guy|christopher|eric)\b/i,
+        /\b(david|mark|guy|james|daniel|alex|george|richard)\b/i
     ];
-    const femaleVoicePattern = /\\b(zira|aria|jenny|michelle|samantha|victoria|karen|susan)\\b/i;
+    const femaleVoicePattern = /\b(zira|aria|jenny|michelle|samantha|victoria|karen|susan)\b/i;
 
     let preferredVoice = englishVoices.find(voice =>
         maleVoicePatterns.some(pattern => pattern.test(voice.name))
