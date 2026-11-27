@@ -1,645 +1,228 @@
-# ⚡ JUNO — Live Demo
+# ⚡ JUNO — Live AI Assistant Demo
 
 ### Jude's Neural Operations Assistant
 
-**A futuristic AI assistant interface exploring AI, automation, command orchestration, voice interaction, and human-computer interaction.**
+**A browser-based conversational AI interface with voice interaction, operational modes, and a futuristic command-center UI.**
 
 <p align="center">
 
-<a href="https://judereyes.github.io/JUNO-Live-Demo/">
+<a href="https://judereyes.github.io/JUNO-Live-Demo/"><strong>🚀 LAUNCH JUNO LIVE</strong></a>
 
-<strong>🚀 LAUNCH LIVE JUNO DEMO</strong>
+</p>
 
-</a>
+<p align="center">
+
+![HTML](https://img.shields.io/badge/HTML5-Frontend-E34F26?style=for-the-badge&logo=html5&logoColor=white)
+![CSS](https://img.shields.io/badge/CSS3-HUD_Design-1572B6?style=for-the-badge&logo=css3&logoColor=white)
+![JavaScript](https://img.shields.io/badge/JavaScript-Interaction-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
+![Cloudflare](https://img.shields.io/badge/Cloudflare-Workers_AI-F38020?style=for-the-badge&logo=cloudflare&logoColor=white)
+![Status](https://img.shields.io/badge/Status-Active_Development-00C7B7?style=for-the-badge)
 
 </p>
 
 ---
 
-## 🧪 Development Status
+## ◈ Overview
 
-<p align="center">
+JUNO — Jude's Neural Operations Assistant — is a personal AI assistant project created by **Jude Reyes**.
 
-🟢 <strong>ACTIVE DEVELOPMENT</strong>
+This repository contains the public browser-based demo: a responsive single-page interface connected to a separately hosted Cloudflare Worker. The Worker calls **Cloudflare Workers AI** to generate conversational responses.
 
-</p>
+JUNO is designed to demonstrate how conversational AI, voice interaction, contextual work modes, and a focused user interface can work together in one assistant experience.
 
-JUNO is an evolving prototype and technical portfolio project.
-
-It is not currently presented as a finished commercial product.
-
-The architecture, interface, services, and integrations may continue to change as development progresses.
-
-### Current Development Areas
-
-- AI integration
-- Command orchestration
-- Voice interaction
-- Automation tools
-- Memory architecture
-- System utilities
-- Error handling
-- UI/UX refinement
-- API integrations
-- Application portability
-
----
-
-## 🗺️ Roadmap
-
-### ✅ Completed
-
-- [x] JUNO project foundation
-- [x] Modular Python architecture
-- [x] AI service foundation
-- [x] Command service
-- [x] Tool registry
-- [x] Calculator service
-- [x] System services
-- [x] Memory service foundation
-- [x] Futuristic JUNO interface
-- [x] Interactive HUD
-- [x] Command console
-- [x] Work-mode interface
-- [x] System status interface
-- [x] Voice interaction experimentation
-- [x] Public GitHub repository
-- [x] Public live demo
-- [x] GitHub Pages deployment
-
-### 🚧 In Development
-
-- [ ] Expanded AI orchestration
-- [ ] Advanced tool registry
-- [ ] Improved memory architecture
-- [ ] Expanded automation capabilities
-- [ ] More reliable command routing
-- [ ] Expanded voice functionality
-- [ ] Additional API integrations
-- [ ] Improved error recovery
-- [ ] More productivity tools
-- [ ] Improved application portability
-
-### 🔮 Future Direction
-
-- [ ] Multi-tool AI workflows
-- [ ] External API integrations
-- [ ] Advanced workflow automation
-- [ ] Persistent structured context
-- [ ] More autonomous task execution
-- [ ] Portable JUNO application
-- [ ] Expanded productivity ecosystem
-
----
-## 🧠 About JUNO
-
-**JUNO — Jude's Neural Operations Assistant** is a personal AI assistant project created by **Jude Reyes**.
-
-JUNO explores how artificial intelligence, automation, command routing, specialized tools, memory, voice interaction, and human-centered interface design can work together inside a centralized digital assistant.
-
-The project serves as:
-
-- 🤖 A personal AI assistant concept
-- ⚙️ An automation experimentation platform
-- 🧠 An AI application engineering project
-- 🛠️ A hands-on software development environment
-- 💼 A technical portfolio project
-- 🔬 A learning environment for AI and automation
-
-### Core Concept
-
-```text
-AI Intelligence
-       +
-Specialized Tools
-       +
-Automation
-       +
-Structured Context
-       +
-Human-Friendly Interface
-       ↓
-      JUNO
-```
-
-JUNO is being developed incrementally, with the goal of exploring how an AI assistant can combine intelligence, tools, automation, structured context, and a practical user interface.
-
----
+> This is an evolving portfolio project, not a finished commercial product. AI output can be inaccurate and should be checked before use in important decisions.
 
 ## 🚀 Live Demo
 
-Experience JUNO directly in your browser:
+**[Open JUNO Live](https://judereyes.github.io/JUNO-Live-Demo/)**
 
-<p align="center">
+## ✨ Features
 
-<a href="https://judereyes.github.io/JUNO-Live-Demo/">
-
-<strong>⚡ EXPERIENCE JUNO LIVE</strong>
-
-</a>
-
-</p>
-
-The public demo showcases the visual and interactive frontend experience of JUNO.
-
-### Demo Features
-
-- 🧠 Animated neural visualization
-- 🖥️ Futuristic HUD interface
-- 💬 Command console
-- ⚙️ Work-mode interface
-- 📊 System status panels
-- 🎙️ Voice interaction interface
-- 🔮 Holographic visual elements
-- ⚡ Interactive controls
-- 📱 Responsive interface design
-
-> **The Live Demo is the presentation layer of JUNO.**
->
-> The main JUNO repository contains the deeper Python application architecture.
-
----
-
-## 🖥️ Interface Design
-
-JUNO uses a custom futuristic HUD inspired by:
-
-- Neural networks
-- Holographic interfaces
-- Intelligent operating systems
-- Digital command centers
-- Mission control systems
-- Human-machine interaction
-
-The design focuses on both **visual identity and usability**.
-
-### Design Principles
-
-```text
-READABILITY
-     ↓
-INFORMATION HIERARCHY
-     ↓
-FUNCTIONAL HUD COMPONENTS
-     ↓
-CONTROLLED ANIMATION
-     ↓
-INTERACTIVE EXPERIENCE
-```
-
-The objective is not simply to create a futuristic interface.
-
-The goal is to explore how a complex AI system can present information in a **clear, organized, and understandable way**.
-
----
-
-## ✨ Interface Features
-
-| Feature | Purpose |
+| Feature | Description |
 |---|---|
-| 🧠 Neural Visualization | Central JUNO visual identity |
-| 🖥️ Futuristic HUD | Operational interface |
-| 💬 Command Console | Assistant interaction area |
-| 🎙️ Voice Interface | Browser-based voice interaction |
-| ⚙️ Work Modes | Different operational contexts |
-| 📊 System Status | Operational information |
-| 🔮 Holographic Elements | Visual system feedback |
-| ⚡ Interactive Controls | User actions and commands |
-| 📱 Responsive Layout | Adaptation to different displays |
+| General AI conversation | Ask open-ended questions and continue a conversation |
+| Session context | Recent conversation turns are retained in the current browser tab |
+| English, Filipino & Taglish | The assistant is instructed to respond in the user's language |
+| Voice input | Browser speech recognition in supported browsers |
+| Voice output | Browser-native speech synthesis |
+| Operational modes | General, Work, Jobs, Interview, Automation, and Client |
+| Command shortcuts | Open selected websites using direct commands |
+| Activity HUD | Live interaction status, voice state, and recent activity |
+| Text attachments | Read supported text-based files and include their contents as prompt context |
+| Responsive interface | Futuristic command-center layout with responsive controls |
 
----
+### Operational modes
 
-## 🏗️ System Architecture
+- **GENERAL** — open-ended questions, writing, translation, brainstorming, and everyday assistance.
+- **WORK** — client instructions, summaries, checklists, and SOP drafting.
+- **JOBS** — job-posting analysis, fit/gap reviews, and application planning.
+- **INTERVIEW** — interview practice and answer feedback.
+- **AUTOMATION** — workflow planning, triggers, actions, and error handling.
+- **CLIENT** — task extraction, prioritization, and client updates.
 
-The Live Demo represents the frontend experience of a larger JUNO architecture.
+Modes provide useful context; they do not prevent users from asking unrelated questions.
 
-```text
-                    ┌───────────────────────┐
-                    │        JUNO           │
-                    │ Neural Operations     │
-                    │ Assistant             │
-                    └───────────┬───────────┘
-                                │
-                                ▼
-                    ┌───────────────────────┐
-                    │    USER INTERFACE     │
-                    │                       │
-                    │ Futuristic HUD        │
-                    │ Command Console       │
-                    │ Voice Controls        │
-                    │ System Panels         │
-                    │ Work Modes            │
-                    └───────────┬───────────┘
-                                │
-                                ▼
-                    ┌───────────────────────┐
-                    │    COMMAND LAYER      │
-                    │                       │
-                    │ Command Routing       │
-                    │ Tool Registry         │
-                    │ State Management      │
-                    └───────────┬───────────┘
-                                │
-                 ┌──────────────┼──────────────┐
-                 ▼              ▼              ▼
-          ┌────────────┐ ┌────────────┐ ┌────────────┐
-          │ AI SERVICE │ │   TOOLS    │ │   MEMORY   │
-          │            │ │            │ │            │
-          │ AI APIs    │ │ Calculator │ │ Structured │
-          │ Responses  │ │ Launcher   │ │ Context    │
-          │            │ │ System     │ │            │
-          └────────────┘ └────────────┘ └────────────┘
-```
+## 🧠 Architecture
 
-This architecture allows JUNO to evolve from a simple assistant interface into a modular AI system.
-
----
-
-## 🧩 Main JUNO Architecture
-
-The main JUNO repository uses a modular Python service architecture.
+The public demo separates the browser interface from the AI service.
 
 ```text
-JUNO/
-│
-├── app/
-│   ├── main.py
-│   │
-│   ├── config/
-│   │
-│   ├── services/
-│   │   ├── ai_service.py
-│   │   ├── calculator_service.py
-│   │   ├── command_service.py
-│   │   ├── gemini_service.py
-│   │   ├── help_service.py
-│   │   ├── launcher_service.py
-│   │   ├── memory_service.py
-│   │   ├── state_service.py
-│   │   ├── system_service.py
-│   │   ├── system_status_service.py
-│   │   └── tool_registry.py
-│   │
-│   ├── static/
-│   │   └── neural-humanoid.png
-│   │
-│   └── templates/
-│       └── index.html
-│
-├── .gitignore
-└── README.md
+┌──────────────────────────────────────────────┐
+│              JUNO — GitHub Pages             │
+│                                              │
+│  HTML / CSS / JavaScript                     │
+│  HUD • Chat Console • Work Modes • Voice     │
+│  Session Conversation Context                │
+└──────────────────────┬───────────────────────┘
+                       │ HTTPS + JSON
+                       ▼
+┌──────────────────────────────────────────────┐
+│          Cloudflare Worker: juno-ai-engine   │
+│                                              │
+│  Request validation • CORS • Context         │
+│  Secure server-side AI binding               │
+└──────────────────────┬───────────────────────┘
+                       │ Workers AI binding
+                       ▼
+┌──────────────────────────────────────────────┐
+│             Cloudflare Workers AI            │
+│                                              │
+│  @cf/zai-org/glm-4.7-flash                    │
+│  Conversational response generation          │
+└──────────────────────────────────────────────┘
 ```
 
-The modular structure allows individual services to be developed, tested, replaced, and expanded independently.
+### Live service configuration
 
----
+| Component | Configuration |
+|---|---|
+| Frontend hosting | GitHub Pages |
+| Frontend repository | `JudeReyes/JUNO-Live-Demo` |
+| Public frontend | `https://judereyes.github.io/JUNO-Live-Demo/` |
+| AI backend | Cloudflare Worker: `juno-ai-engine` |
+| Worker endpoint | `https://juno-ai-engine.jude-reyes0618.workers.dev/` |
+| AI provider | Cloudflare Workers AI |
+| Model | `@cf/zai-org/glm-4.7-flash` |
+| Worker binding | `AI` |
+| Browser context | `sessionStorage` (current tab/session) |
 
-## ⚙️ Core Services
+The browser sends recent user/assistant messages to the Worker. The Worker uses its server-side Workers AI binding and returns a reply. No provider API key is embedded in the public HTML.
 
-JUNO is organized around specialized services that separate responsibilities and make the system easier to expand.
+## 🎙️ Voice interaction
 
-### 🤖 AI Service
+Voice features depend on browser support and permissions:
 
-Handles AI-related functionality and integration with AI providers.
+- Speech input uses the browser's Speech Recognition API where available.
+- Speech output uses the browser's Speech Synthesis API.
+- Chrome is the primary browser used during development.
+- Available voices and pronunciation quality depend on the operating system and installed browser voices.
 
-```text
-User Input
-    ↓
-Command Layer
-    ↓
-AI Service
-    ↓
-AI Provider
-    ↓
-Response
-    ↓
-JUNO Interface
-```
+Voice recognition and speech playback are browser features; they are not generated by the Workers AI model itself.
 
-### 🎯 Command Service
+## 📎 Attachment support
 
-Acts as the routing layer for JUNO.
+The demo can read text-based files in the browser, including:
 
-```text
-User Command
-     ↓
-Command Parser
-     ↓
-Command Router
-     ↓
-Specialized Service
-     ↓
-Result
-```
+- `.txt`
+- `.md`
+- `.csv`
+- `.json`
+- `.log`
 
-The command layer provides a foundation for routing different types of requests to the appropriate service.
+The current demo includes up to 14,000 characters of extracted text in the AI request. PDF, Word, and image OCR/document parsing are not currently implemented. Do not upload confidential information to a public demo.
 
-### 🧰 Tool Registry
+## 🛠️ Technology stack
 
-Provides a centralized structure for JUNO's available tools.
-
-Examples include:
-
-- Calculator
-- Application launcher
-- System information
-- Help system
-- Memory
-- AI services
-- Automation utilities
-
-The goal is to make tools easier to register, manage, and expand as JUNO develops.
-
-### 🧠 Memory Service
-
-Provides a foundation for structured assistant context.
-
-```text
-STORE
-  ↓
-ORGANIZE
-  ↓
-RETRIEVE
-  ↓
-USE CONTEXT
-```
-
-Sensitive personal memory data is kept outside the public repository.
-
----
-
-## 🛠️ Technology Stack
-
-### Frontend
-
+**Frontend**
 - HTML5
 - CSS3
-- JavaScript
-- Responsive UI
-- Custom HUD interface
-- Web Speech API
+- Vanilla JavaScript
+- Web Speech APIs
+- Session Storage
 
-### Backend
+**AI backend**
+- Cloudflare Workers
+- Cloudflare Workers AI
+- JSON over HTTPS
+- Server-side AI binding
 
-- Python
-- Flask
-- Modular Python services
-- Command routing
-- Tool registry
-- State management
-- Memory services
-- System services
-
-### AI & Automation
-
-- AI API integration
-- AI-assisted workflows
-- Command orchestration
-- Tool-based architecture
-- Structured context management
-- Automation experimentation
-
-### Development
-
-- Git
+**Delivery**
 - GitHub
-- VS Code
-- Python virtual environment
-- AI-assisted development
-- Local development environment
+- GitHub Pages
+- Cloudflare dashboard / Worker deployment
 
----
+## 🔐 Security and privacy
 
-## 🎯 Engineering Focus
+- Do not place API keys, passwords, or private credentials in `index.html` or any public repository.
+- The frontend calls the Worker endpoint; the AI binding is configured server-side.
+- The Worker applies an origin allow-list for the GitHub Pages site.
+- Conversation context is kept in the current browser tab's session storage and sent to the AI service when a request is made.
+- Avoid submitting passwords, financial details, confidential client data, or sensitive personal information.
+- AI responses may be incomplete or incorrect; verify important information independently.
 
-JUNO is being developed around several practical software and AI engineering concepts.
+## ⚠️ Current limitations
 
-### 🤖 AI Integration
+- No live web search or current vacancy/news lookup is connected.
+- No external email, calendar, CRM, or productivity accounts are connected.
+- Work modes provide contextual guidance; they do not execute real-world actions.
+- Long-term cross-device memory and user accounts are not implemented.
+- Only the listed text formats are readable as attachments.
+- Voice capabilities vary by browser and device.
+- Availability, model access, and usage limits depend on the Cloudflare account and current Workers AI plan.
 
-Connecting AI services to a custom application and command architecture.
+## 🗺️ Development roadmap
 
-The objective is to move beyond a simple chatbot interface toward a system where AI can interact with specialized capabilities.
+- [x] Futuristic responsive HUD interface
+- [x] Command console and operational modes
+- [x] Browser voice input/output
+- [x] Cloudflare Worker deployment
+- [x] Workers AI binding and successful backend response test
+- [x] Frontend connection to the Workers AI endpoint
+- [x] In-tab conversation context
+- [x] Consistent professional control styling
+- [ ] End-to-end verification on the public GitHub Pages deployment
+- [ ] Improved document and PDF processing
+- [ ] Optional persistent memory with clear privacy controls
+- [ ] Additional integrations with explicit user approval
 
-### 🧩 Tool Orchestration
-
-Routing user requests to specialized services.
-
-```text
-USER
-  ↓
-COMMAND INPUT
-  ↓
-COMMAND ROUTER
-  ↓
-┌─────────────┬─────────────┬─────────────┐
-↓             ↓             ↓
-AI SERVICE    SYSTEM TOOL   CALCULATOR
-└─────────────┴─────────────┴─────────────┘
-  ↓
-RESPONSE
-```
-
-This approach provides a foundation for connecting different tools to a centralized assistant.
-
-### ⚙️ Automation
-
-JUNO explores how AI can assist with repetitive digital operations and workflow-based tasks.
-
-Future development may connect JUNO with:
-
-- External APIs
-- Productivity systems
-- Automation platforms
-- Business workflows
-- Digital productivity tools
-
-### 🧠 Memory
-
-Structured memory is being explored as a foundation for maintaining useful assistant context.
-
-The goal is to allow JUNO to organize relevant information and use appropriate context when processing future interactions.
-
-### 🖥️ Human-Computer Interaction
-
-JUNO explores how AI systems can communicate complex information through:
-
-- Visual hierarchy
-- Status indicators
-- Command feedback
-- Voice interaction
-- Structured panels
-- Contextual information
-
-The interface is therefore treated as part of the system architecture, not simply as visual decoration.
-
----
-
-## 🔐 Security & Privacy
-
-Security is an important consideration throughout JUNO's development.
-
-Sensitive information should never be committed directly to a public repository.
-
-The project is designed to keep the following outside version control:
-
-- 🔑 API keys
-- 🔐 Environment variables
-- 🧠 Personal memory data
-- 🔒 Local credentials
-- 🐍 Virtual environments
-- 🗃️ Local databases
-- 🧪 Development backups
-- 💻 Local development artifacts
-
-> **Never place API keys, passwords, private credentials, or sensitive personal information inside public frontend code or repositories.**
-
-The `.gitignore` configuration is used to help prevent sensitive and unnecessary local files from being committed.
-
----
-
-## 📂 Live Demo Repository
-
-The public demo repository is intentionally lightweight and focused on the presentation layer of JUNO.
+## 📂 Repository structure
 
 ```text
 JUNO-Live-Demo/
-│
 ├── index.html
 ├── README.md
 └── .github/
 ```
 
-The Live Demo repository contains the public presentation and interactive frontend experience.
+The AI backend is hosted separately as a Cloudflare Worker and is not stored in this public frontend repository.
 
-The full JUNO development architecture is maintained separately in the main repository.
-
----
-
-## 🔗 Project Links
+## 🔗 Project links
 
 | Resource | Link |
 |---|---|
-| ⚡ Live JUNO Demo | [Launch Live Demo](https://judereyes.github.io/JUNO-Live-Demo/) |
-| 🧠 Main JUNO Repository | [GitHub — JUNO](https://github.com/JudeReyes/JUNO) |
-| 💼 Portfolio | [Jude Reyes — Technical Virtual Assistant](https://jude-va-portfolio.lovable.app) |
-| 🔗 LinkedIn | [Jude Reyes](https://www.linkedin.com/in/judereyes0618) |
-| 🐙 GitHub | [JudeReyes](https://github.com/JudeReyes) |
-
----
+| Live JUNO Demo | [Launch JUNO](https://judereyes.github.io/JUNO-Live-Demo/) |
+| Main JUNO Repository | [JudeReyes/JUNO](https://github.com/JudeReyes/JUNO) |
+| Portfolio | [Jude Reyes — Technical VA](https://jude-va-portfolio.lovable.app) |
+| GitHub | [JudeReyes](https://github.com/JudeReyes) |
+| LinkedIn | [Jude Reyes](https://www.linkedin.com/in/judereyes0618) |
 
 ## 👨‍💻 Developer
 
-### Jude Reyes
+**Jude Reyes**  
+Technical Virtual Assistant | Workflow Automation | AI Tools | Web Development
 
-**Technical Virtual Assistant | Workflow Automation | AI Tools | Web Development**
-
-JUNO represents my hands-on exploration of:
-
-- Artificial intelligence
-- Workflow automation
-- Python development
-- Web development
-- API integration
-- System tools
-- Command orchestration
-- Human-computer interaction
-
-The project follows a **learning-by-building approach**.
-
-AI-assisted development tools are used to accelerate experimentation, research, debugging, and implementation while architectural decisions, testing, validation, and project direction remain part of the development process.
+JUNO is a hands-on portfolio project exploring conversational AI integration, frontend engineering, serverless deployment, voice interaction, and human-computer interaction.
 
 ---
 
-## 💡 Why JUNO?
-
-JUNO started from a simple question:
-
-> **What if an AI assistant could become a practical operating layer for everyday digital work?**
-
-Instead of treating AI as only a conversational interface, JUNO explores a broader architecture where an assistant can potentially:
-
-```text
-UNDERSTAND
-    ↓
-DECIDE
-    ↓
-ROUTE
-    ↓
-EXECUTE
-    ↓
-REMEMBER
-    ↓
-RESPOND
-```
-
-This represents the long-term direction behind the project.
-
----
-
-## ⚡ JUNO Vision
-
-The long-term goal is to evolve JUNO from a personal AI assistant prototype into a practical platform capable of supporting:
-
-- Technical virtual assistant operations
-- Workflow automation
-- Repetitive digital tasks
-- Productivity workflows
-- AI-assisted decision support
-- Tool orchestration
-- API-driven operations
-
-The project is intentionally being built incrementally.
-
-Each new service, interface improvement, automation, and integration contributes to the larger system.
-
----
-
-## 🚀 What's Next?
-
-JUNO will continue evolving as new capabilities are explored and implemented.
-
-Future development will focus on improving:
-
-- AI reasoning and orchestration
-- Tool integration
-- Automation workflows
-- Structured memory
-- Voice interaction
-- API connectivity
-- Productivity features
-- Application portability
-
-The objective is to turn the prototype into a more capable and practical AI-assisted operating environment.
-
----
-
-<div align="center">
+<p align="center">
 
 # ⚡ JUNO
 
-### Jude's Neural Operations Assistant
+**UNDERSTAND • ASSIST • ORGANIZE • RESPOND**
 
-**AI • Automation • Tools • Interaction**
+Designed & built by **Jude Reyes**
 
-<br>
+<a href="https://judereyes.github.io/JUNO-Live-Demo/"><strong>🚀 EXPERIENCE JUNO LIVE</strong></a>
 
-<a href="https://judereyes.github.io/JUNO-Live-Demo/">
-
-<strong>🚀 EXPERIENCE JUNO LIVE</strong>
-
-</a>
-
-<br><br>
-
-<strong>Designed & Built by Jude Reyes</strong>
-
-<br><br>
-
-Technical Virtual Assistant  
-Workflow Automation • AI Tools • Web Development
-
-<br><br>
-
-⭐ Explore the repository and follow JUNO's development.
-
-</div>
+</p>
