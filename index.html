@@ -9901,6 +9901,69 @@ function addMessage(text,type){
 
 
 
+
+/* =========================================================
+   JUNO LOCAL INTENT UNDERSTANDING — COMPANY + TAGLISH
+========================================================= */
+function junoAdditionalIntentReply(command){
+    const raw = String(command || "").trim();
+    const lower = raw.toLowerCase().replace(/^(hey\s+)?juno[,\s]+/i, "").trim();
+    const tagalog = /\b(kaya|mo|ba|bakit|di|hindi|pa|rin|mag|tagalog|filipino|kumanta|kanta|wala|akong|pakialam|ayusin|trabaho|sino|ano|paano|pwede|puwede|salamat|kilala|ko|ako)\b/i.test(lower);
+
+    if(/\b(kaya mo ba kumanta|can you sing|sing for me|kumanta ka)\b/i.test(lower)){
+        return tagalog
+            ? "Kaya kong gumawa ng orihinal na maikling kanta o lyrics para sa iyo. Pero sa kasalukuyang browser voice ko, pagsasalita lang ang kaya kong i-play—hindi pa ako nakakakanta ng totoong melody. Maaari akong gumawa ng orihinal na kanta sa text."
+            : "I can write an original short song or lyrics for you. My current browser voice can speak, but it cannot perform a real sung melody. I can create an original song in text.";
+    }
+    if(/\b(bakit|why)\b.*\b(tagalog|filipino)\b|\b(bakit di mo pa rin kayang mag tagalog|why can.t you speak tagalog)\b/i.test(lower)){
+        return "Pasensya na. Dapat mas maayos kong naiintindihan at nasasagot ang mga simpleng tanong mo sa Tagalog. Inaayos ko ang local command handling para hindi na basta bumalik sa generic na English response. Offline demo pa rin ito at wala pang konektadong full AI service.";
+    }
+    if(/\b(wala akong pakialam|ayusin mo trabaho mo|fix your job|do your job)\b/i.test(lower)){
+        return "Tama ka—hindi naging maayos ang mga naunang sagot ko. Pasensya na. Hindi ko dapat inulit-ulit ang generic na response. Susubukan kong sagutin nang direkta ang tanong mo at sabihin nang malinaw kapag may limitasyon ako.";
+    }
+    if(tagalog && /\b(kilala mo ba ako|kilala mo ba ko)\b/i.test(lower)){
+        return "Sa ngayon, ang alam ko lang ay ang impormasyong ibinahagi mo sa usapang ito. Hindi ako nakakonekta sa personal database o permanenteng memory ng mga user. Maaari kitang tulungan batay sa impormasyong ibinibigay mo rito.";
+    }
+
+    // Speech recognition may truncate "company" to "con" or "comp".
+    const anyCompany = /\b(any|some|a|the)\s+(?:company|companies|comp|con|employer|business|aerospace|aircraft|aviation|manufacturer|factory|supplier)\b/i.test(lower);
+    const companyCue = /\b(company|companies|employer|business|aerospace|aircraft|aviation|manufacturer|manufacturing|factory|supplier|con)\b/i.test(lower);
+    const jobCue = /\b(hir(?:e|ing)|job|jobs|vacanc(?:y|ies)|production|operator|workers?|work|career|recruit|employment|opening)\b/i.test(lower);
+    const location = /\b(germany|german)\b/i.test(lower) ? "Germany" :
+        /\b(croatia|croatian)\b/i.test(lower) ? "Croatia" :
+        /\b(united kingdom|\buk\b|britain)\b/i.test(lower) ? "the United Kingdom" :
+        /\b(poland|polish)\b/i.test(lower) ? "Poland" : "the location you specify";
+    const industry = /\b(aerospace|aircraft|aviation)\b/i.test(lower) ? "aerospace and aviation" :
+        /\b(production|manufactur|factory)\b/i.test(lower) ? "manufacturing and production" :
+        "the industry you mentioned";
+
+    if(jobCue && (companyCue || anyCompany || /\b(production|operator)\b/i.test(lower))){
+        return (tagalog ? "PAGHAHANAP NG KUMPANYA AT TRABAHO" : "COMPANY AND JOB SEARCH REQUEST") +
+            "\n\n" +
+            (tagalog
+                ? "Naiintindihan ko: naghahanap ka ng kumpanyang may hiring para sa production workers sa " + location + ", sa larangan ng " + industry + "."
+                : "I understand that you're looking for companies hiring production workers in " + location + ", particularly in " + industry + ".") +
+            "\n\n" +
+            (tagalog
+                ? "Wala pang live web search na nakakonekta sa JUNO demo na ito, kaya hindi ako makakapagbigay ng beripikadong kasalukuyang vacancies o pangalan ng kumpanyang hiring. Hindi ako mag-iimbento ng job openings. Maaari kitang tulungang suriin ang job offer, requirements, recruiter at opisyal na application channels."
+                : "Live web search is not connected to this JUNO demo, so I cannot verify current vacancies or name companies that are hiring right now. I won't invent job openings. I can help assess a job offer, requirements, recruiter and official application channels.");
+    }
+
+    if((anyCompany || companyCue) && /\b(tell me|about|search|find|look|list|name|company|companies|any|some)\b/i.test(lower)){
+        return (tagalog ? "PAGHAHANAP NG IMPORMASYON SA KUMPANYA" : "COMPANY RESEARCH REQUEST") +
+            "\n\n" +
+            (tagalog
+                ? "Naiintindihan ko na impormasyon tungkol sa mga kumpanya sa " + industry + " ang hinahanap mo."
+                : "I understand that you're asking about companies in " + industry + ".") +
+            "\n\n" +
+            (tagalog
+                ? "Wala pang live web search ang JUNO demo na ito, kaya hindi ako makakapag-verify ng mga pangalan, detalye o kasalukuyang hiring. Hindi ako mag-iimbento ng impormasyon."
+                : "Live web search is not connected to this JUNO demo, so I cannot verify company names, details or current hiring. I won't invent information.");
+    }
+    return null;
+}
+
+
 /* =========================================================
    JUNO — LOCAL QUICK COMMAND ROUTER
    Website links are user-clicked; live search requires a backend.
