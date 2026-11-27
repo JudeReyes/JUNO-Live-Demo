@@ -10240,8 +10240,8 @@ function junoBuildClientContext(){
     const localDateTime = new Intl.DateTimeFormat(undefined,{
         dateStyle:"full", timeStyle:"long"
     }).format(now);
-    const location = (typeof sharedBrowserLocation !== "undefined" && sharedBrowserLocation)
-        ? JSON.stringify(sharedBrowserLocation)
+    const location = (window.__junoSharedBrowserLocation)
+        ? JSON.stringify(window.__junoSharedBrowserLocation)
         : "Not shared; no GPS permission has been granted in this session.";
     return JSON.stringify({
         local_date_time:localDateTime,
@@ -10334,7 +10334,7 @@ function initializeJuno(){
     if(voiceStatus) voiceStatus.textContent = "ACTIVE";
 
     // Use the exact same announcement text for the console and speech output.
-    speakText(announcement.replace(/^JUNO:\\s*/i, ""));
+    speakText(announcement.replace(/^JUNO:\s*/i, ""));
 
 }
 
@@ -10892,6 +10892,12 @@ window.selectJunoMode=function(mode){ window.__junoActiveMode=mode; return _sele
   window.junoRecordActivity("SYSTEM","Activity monitor online");
 
   function stopSpeechNow(){
+    if(recognitionRunning && recognition){
+      try{ recognition.stop(); }catch(e){}
+      recognitionRunning = false;
+      const listenButton = document.querySelector(".juno-chat-control.listen");
+      if(listenButton) listenButton.textContent = "🎙 LISTEN";
+    }
     if(typeof window.stopCurrentJunoAudio === "function"){
       try{ window.stopCurrentJunoAudio(); }catch(e){}
     }else{
@@ -11016,7 +11022,7 @@ window.selectJunoMode=function(mode){ window.__junoActiveMode=mode; return _sele
     if(typeof addMessage === "function") addMessage("JUNO: Requesting location permission. Your coordinates will only be shared if you approve the browser prompt.", "juno");
     navigator.geolocation.getCurrentPosition(
       position => {
-        sharedBrowserLocation = {
+        window.__junoSharedBrowserLocation = {
           latitude: Number(position.coords.latitude.toFixed(5)),
           longitude: Number(position.coords.longitude.toFixed(5)),
           accuracy_meters: Math.round(position.coords.accuracy)
@@ -11024,7 +11030,7 @@ window.selectJunoMode=function(mode){ window.__junoActiveMode=mode; return _sele
         if(typeof addMessage === "function") addMessage("JUNO: Location permission granted. Approximate coordinates are available to JUNO for this page session; this does not identify an exact street address.", "juno");
       },
       error => {
-        sharedBrowserLocation = null;
+        window.__junoSharedBrowserLocation = null;
         const reason = error && error.code === 1 ? "Permission was denied." : "The browser could not determine your location.";
         if(typeof addMessage === "function") addMessage("JUNO: " + reason + " I will use timezone information only and will not guess your precise location.", "juno");
       },
