@@ -8871,8 +8871,9 @@ html,body{
     </div>
 <div id="junoControlUpgrade" class="juno-upgrade-controls" aria-label="JUNO Controls">
   <button class="action primary" type="button" onclick="initializeJuno()">⚡ INITIALIZE</button>
+  <button class="action" type="button" onclick="runJunoSystemCheck()">🛠 SYSTEM CHECK</button>
   <button class="action" type="button" onclick="junoToggleListening()">🎙 LISTEN</button>
-  <button class="action" type="button" onclick="junoSpeakCurrent()">🔊 SPEAK</button>
+  <button class="action" type="button" onclick="junoSpeakCurrent()">🔊 SPEAK LAST RESPONSE</button>
   <button class="action stop-speech" type="button" onclick="junoStopSpeaking()">⏹ STOP</button>
   <label class="action" style="display:flex;align-items:center;justify-content:center;cursor:pointer;">
     📎 ATTACH FILE
@@ -8884,35 +8885,6 @@ html,body{
     <span class="panel-interaction-hint">CLICK A CONTROL</span>
 
 
-    <button
-        id="micToggleButton"
-        class="action primary mic-toggle mic-off"
-        style="width:100%;margin-bottom:7px;"
-        onclick="toggleContinuousListening()">
-
-        <span id="micModeText">MICROPHONE OFF</span>
-
-    </button>
-
-
-    <button
-        class="action"
-        style="width:100%;margin-bottom:7px;"
-        onclick="speakJuno()">
-
-        🔊 SPEECH MODE
-
-    </button>
-
-
-    <button
-        class="action"
-        style="width:100%;margin-bottom:7px;"
-        onclick="initializeJuno()">
-
-        ⚡ SYSTEM CHECK
-
-    </button>
 
 
     <button
@@ -10093,27 +10065,42 @@ async function sendVoiceCommand(text){
 function initializeJuno(){
 
     addMessage(
-        "JUNO: Neural systems initialized.",
+        "JUNO: Initialization complete. The interface is ready. Select a work mode or enter a command to begin.",
         "juno"
     );
 
+    const voiceStatus = document.getElementById("voiceStatus");
+    if(voiceStatus) voiceStatus.textContent = "ACTIVE";
 
-    const voiceStatus =
-        document.getElementById(
-            "voiceStatus"
-        );
+    speakText("JUNO initialization complete. The interface is ready for your command.");
 
-    if(voiceStatus){
+}
 
-        voiceStatus.textContent =
-            "ACTIVE";
+/* A real browser-capability check, separate from initialization and speech playback. */
+function runJunoSystemCheck(){
 
-    }
+    const speechSupported = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
+    const recognitionSupported = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+    const secure = window.isSecureContext;
+    const voiceCount = speechSupported ? window.speechSynthesis.getVoices().length : 0;
 
+    const lines = [
+        "SYSTEM CHECK COMPLETE",
+        "Interface: ONLINE",
+        "Speech output: " + (speechSupported ? "AVAILABLE" : "NOT SUPPORTED"),
+        "Microphone recognition: " + (recognitionSupported ? "AVAILABLE" : "NOT SUPPORTED"),
+        "Secure browser context: " + (secure ? "YES" : "NO"),
+        "Browser voices currently loaded: " + voiceCount,
+        "Live AI backend: NOT CONNECTED — portfolio demo mode"
+    ];
 
-    speakText(
-        "Hello Jude. JUNO neural systems are online."
-    );
+    const report = lines.join("\n");
+    addMessage("JUNO: " + report, "juno");
+    speakText("System check complete. Interface online. Speech output " +
+        (speechSupported ? "available" : "not supported") +
+        ". Microphone recognition " +
+        (recognitionSupported ? "available" : "not supported") +
+        ". Live AI backend is not connected in this portfolio demo.");
 
 }
 
@@ -10768,17 +10755,15 @@ window.selectJunoMode=function(mode){ window.__junoActiveMode=mode; return _sele
   };
 
   window.junoSpeakCurrent = function(){
-    if(typeof speakJuno === "function") speakJuno();
-    else {
-      const msgs = document.querySelectorAll(".message.juno");
-      const last = msgs[msgs.length-1]?.innerText || "";
-      if(last){
-        stopSpeechNow();
-        const u = new SpeechSynthesisUtterance(last.replace(/^JUNO:\s*/i,""));
-        speechActive = true;
-        u.onend = () => { speechActive = false; try{ if(typeof window.setJunoHudState === "function") window.setJunoHudState("READY"); }catch(e){} };
-        window.speechSynthesis.speak(u);
-      }
+    const msgs = document.querySelectorAll(".message.juno");
+    const last = msgs[msgs.length-1]?.innerText || "";
+    const text = last.replace(/^JUNO:\s*/i,"").trim();
+    if(!text) return;
+    stopSpeechNow();
+    if(typeof window.speakText === "function"){
+      window.speakText(text);
+    }else if(typeof speakText === "function"){
+      speakText(text);
     }
   };
 
