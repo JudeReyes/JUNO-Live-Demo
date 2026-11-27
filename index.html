@@ -9831,7 +9831,7 @@ function addMessage(text,type){
     messages.scrollTop = messages.scrollHeight;
 
     if(typeof window.junoRecordActivity === "function"){
-        const detail = String(text || "").replace(/^(YOU|JUNO):\\s*/i,"").replace(/\\s+/g," ").trim();
+        const detail = String(text || "").replace(/^(YOU|JUNO):\s*/i,"").replace(/\s+/g," ").trim();
         if(type === "you" && detail){
             window.junoRecordActivity("COMMAND", detail);
         }else if(type === "juno" && detail && !/^(Neural interface initialized|Awaiting system initialization)/i.test(detail)){
@@ -10668,7 +10668,7 @@ window.selectJunoMode=function(mode){ window.__junoActiveMode=mode; return _sele
     const label = document.createElement("span");
     const message = document.createElement("span");
     label.textContent = String(kind || "EVENT").toUpperCase().slice(0,12);
-    const clean = String(detail || "").replace(/\\s+/g," ").trim();
+    const clean = String(detail || "").replace(/\s+/g," ").trim();
     message.textContent = clean.length > 78 ? clean.slice(0,75) + "…" : clean;
     item.append(label,message);
     feed.prepend(item);
