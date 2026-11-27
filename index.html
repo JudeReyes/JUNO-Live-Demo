@@ -8906,7 +8906,8 @@ html,body{
     <div class="panel-title">JUNO WORK MODES</div>
     <span class="panel-interaction-hint">SELECT OPERATING MODE</span>
     <div class="juno-mode-grid" role="group" aria-label="JUNO work modes">
-        <button class="juno-mode-btn active" data-juno-mode="WORK" onclick="selectJunoMode('WORK')">WORK<small>VA ASSISTANT</small></button>
+        <button class="juno-mode-btn active" data-juno-mode="GENERAL" onclick="selectJunoMode('GENERAL')">GENERAL<small>ASK ANYTHING</small></button>
+        <button class="juno-mode-btn" data-juno-mode="WORK" onclick="selectJunoMode('WORK')">WORK<small>VA ASSISTANT</small></button>
         <button class="juno-mode-btn" data-juno-mode="JOBS" onclick="selectJunoMode('JOBS')">JOBS<small>APPLICATIONS</small></button>
         <button class="juno-mode-btn" data-juno-mode="INTERVIEW" onclick="selectJunoMode('INTERVIEW')">INTERVIEW<small>COACH</small></button>
         <button class="juno-mode-btn" data-juno-mode="AUTOMATION" onclick="selectJunoMode('AUTOMATION')">AUTOMATION<small>WORKFLOWS</small></button>
@@ -9907,7 +9908,7 @@ function junoHandleQuickCommand(command){
 function junoOfflineDemoReply(command){
     const text = String(command || "").trim();
     const lower = text.toLowerCase();
-    const mode = String(window.__junoActiveMode || "WORK").toUpperCase();
+    const mode = String(window.__junoActiveMode || "GENERAL").toUpperCase();
     const line = (value) => String(value || "").replace(/[<>]/g, "").trim();
 
     if (/^(hi|hello|hey)( juno)?[.! ]*$/i.test(text)) {
@@ -9919,11 +9920,27 @@ function junoOfflineDemoReply(command){
     }
 
     if (/\b(help|what can you do|capabilities)\b/.test(lower)) {
-        return "I can demonstrate five portfolio workflows: WORK — summarize instructions, create checklists and SOPs; JOBS — review job requirements and prepare honest application materials; INTERVIEW — practice and improve answers; AUTOMATION — map Make.com and Zapier workflows; CLIENT — organize, prioritize and report client tasks. Select a mode, then try one of its action buttons.";
+        return "I can demonstrate six portfolio modes: GENERAL — everyday questions, writing help and brainstorming with offline-demo limits; WORK — summarize instructions, create checklists and SOPs; JOBS — review job requirements and prepare honest application materials; INTERVIEW — practice and improve answers; AUTOMATION — map Make.com and Zapier workflows; CLIENT — organize, prioritize and report client tasks. Select a mode, then try one of its action buttons.";
     }
 
     if (/\b(clear|erase)\s+(the\s+)?(console|chat|messages)\b/.test(lower)) {
         return "Use the CLEAR CONSOLE control to clear the conversation display. Your browser-based demo does not store this chat as a permanent client record.";
+    }
+
+    if (mode === "GENERAL") {
+        if (/\b(explain|how does|what is|what are)\b/.test(lower) && /\b(artificial intelligence|\bai\b|machine learning)\b/.test(lower)) {
+            return "SAMPLE EXPLANATION — ARTIFICIAL INTELLIGENCE\n\nArtificial intelligence is software designed to perform tasks that normally require human-like abilities, such as understanding language, recognizing patterns and generating suggestions. It learns patterns from data during training, then uses those patterns to produce an output when given a prompt. AI can be useful, but its answers still need human review because it can make mistakes.\n\nDEMO NOTE: This is a built-in example, not a live AI-generated answer.";
+        }
+        if (/\b(write|rewrite|improve|polish|draft)\b/.test(lower)) {
+            return "I can help with writing in GENERAL mode. Paste the text you want me to write or improve, and include the tone or audience if you have one. In this offline portfolio demo, I can show prepared examples; full open-ended writing requires a connected AI service.";
+        }
+        if (/\b(brainstorm|ideas|idea)\b/.test(lower)) {
+            return "Let's brainstorm. Tell me the topic, audience and goal. I can organize ideas into practical options and next steps. In this offline demo, broad idea generation is limited to built-in examples until an AI service is connected.";
+        }
+        if (/\b(translate|translation)\b/.test(lower)) {
+            return "I can help prepare a translation request. Tell me the text and target language. Full, reliable open-ended translation requires a connected language or AI service; this demo does not claim to translate arbitrary text offline.";
+        }
+        return "GENERAL MODE is active. I can demonstrate built-in examples, explain selected topics, help structure writing requests and guide brainstorming. I'm currently in offline demo mode, so I cannot reliably answer every open-ended question without a connected AI service. Your question has not been sent to an external AI.";
     }
 
     if (mode === "WORK") {
@@ -10001,7 +10018,7 @@ async function sendCommand(){
             headers:{"Content-Type":"application/json"},
             body:JSON.stringify({
                 command:text,
-                mode:window.__junoActiveMode || "WORK"
+                mode:window.__junoActiveMode || "GENERAL"
             })
         });
 
@@ -10039,7 +10056,7 @@ async function sendVoiceCommand(text){
             headers:{"Content-Type":"application/json"},
             body:JSON.stringify({
                 command:cleaned,
-                mode:window.__junoActiveMode || "WORK"
+                mode:window.__junoActiveMode || "GENERAL"
             })
         });
         if(!response.ok) throw new Error("Voice command HTTP " + response.status);
@@ -10527,13 +10544,14 @@ function startRecognitionSession(){if(!junoContinuousMode||junoResponseBusy||jun
 ========================================================= */
 (function(){
     const configs = {
+        GENERAL:{title:"GENERAL AI ASSISTANT",copy:"Ask general questions, explore ideas, draft and improve writing, translate text and get help with everyday problems. Open-ended AI answers require an optional connected AI service.",actions:["EXPLAIN A TOPIC","WRITE / REWRITE","BRAINSTORM IDEAS"]},
         WORK:{title:"WORK ASSISTANT",copy:"Organize client work, summarize instructions, create checklists and draft practical SOPs.",actions:["SUMMARIZE","MAKE CHECKLIST","CREATE SOP"]},
         JOBS:{title:"JOB APPLICATIONS",copy:"Analyze a job posting, compare it with your real experience, identify gaps and prepare an honest application strategy.",actions:["ANALYZE JOB","FIT / GAP","APPLICATION PLAN"]},
         INTERVIEW:{title:"INTERVIEW COACH",copy:"Practice Technical VA interviews, improve structure and receive communication coaching without exaggerating your experience.",actions:["START MOCK","ANSWER REVIEW","RETRY"]},
         AUTOMATION:{title:"AUTOMATION SPECIALIST",copy:"Turn a business request into a workflow plan with triggers, actions, data handling and error checks before execution.",actions:["PLAN WORKFLOW","MAKE.COM PLAN","ZAPIER PLAN"]},
         CLIENT:{title:"CLIENT TASKS",copy:"Convert client messages into prioritized tasks, a clear sequence of work and a professional completion update.",actions:["PARSE TASK","PRIORITIZE","CLIENT UPDATE"]}
     };
-    let activeMode = "WORK";
+    let activeMode = "GENERAL";
     let pendingPlan = false;
 
     function modeMessage(mode){
@@ -10569,6 +10587,9 @@ function startRecognitionSession(){if(!junoContinuousMode||junoResponseBusy||jun
 
     window.runJunoModeAction=function(action){
         const prompts={
+            "EXPLAIN A TOPIC":"Explain this topic in simple, clear language. If no topic is provided, ask me what I want explained.",
+            "WRITE / REWRITE":"Help me write or improve this text. Ask me to provide the text and desired tone if missing.",
+            "BRAINSTORM IDEAS":"Help me brainstorm practical ideas. Ask for the topic or goal if missing.",
             "SUMMARIZE":"Summarize these client instructions into the key actions.",
             "MAKE CHECKLIST":"Turn these instructions into a prioritized checklist.",
             "CREATE SOP":"Create a clear SOP from these notes.",
@@ -10609,7 +10630,7 @@ function startRecognitionSession(){if(!junoContinuousMode||junoResponseBusy||jun
         if(typeof addMessage === "function") addMessage("JUNO: Action plan cancelled.","juno");
     };
 
-    document.addEventListener("DOMContentLoaded",()=>selectJunoMode("WORK"));
+    document.addEventListener("DOMContentLoaded",()=>selectJunoMode("GENERAL"));
 })();
 
 /* Add selected mode to the existing backend request without replacing the backend. */
@@ -10621,12 +10642,12 @@ function startRecognitionSession(){if(!junoContinuousMode||junoResponseBusy||jun
         const text=input ? input.value.trim() : "";
         if(!text) return;
         const messages=document.getElementById("messages");
-        if(messages) messages.dataset.activeMode=(window.__junoActiveMode||"WORK");
+        if(messages) messages.dataset.activeMode=(window.__junoActiveMode||"GENERAL");
         return originalSendCommand.apply(this,arguments);
     };
 })();
 
-window.__junoActiveMode="WORK";
+window.__junoActiveMode="GENERAL";
 const _selectJunoMode=window.selectJunoMode;
 window.selectJunoMode=function(mode){ window.__junoActiveMode=mode; return _selectJunoMode(mode); };
 </script>
