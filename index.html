@@ -8762,6 +8762,189 @@ html,body{
 }
 </style>
 
+
+<style id="juno-phase2-hud">
+/* JUNO 2.0 — live activity monitor and responsive state feedback */
+.juno-activity-wave span{height:5px;opacity:.48;transition:height .18s ease,opacity .18s ease;}
+.juno-activity-wave[data-state="LISTENING"] span,
+.juno-activity-wave[data-state="THINKING"] span,
+.juno-activity-wave[data-state="SPEAKING"] span{opacity:1;animation:voiceWave .52s ease-in-out infinite alternate;}
+.juno-activity-wave[data-state="THINKING"] span{animation-duration:.34s;}
+.juno-activity-wave[data-state="OFFLINE"] span{opacity:.22;}
+.juno-activity-wave span:nth-child(2){animation-delay:.08s;}
+.juno-activity-wave span:nth-child(3){animation-delay:.16s;}
+.juno-activity-wave span:nth-child(4){animation-delay:.24s;}
+.juno-activity-wave span:nth-child(5){animation-delay:.32s;}
+.juno-activity-wave span:nth-child(6){animation-delay:.40s;}
+.juno-activity-wave span:nth-child(7){animation-delay:.48s;}
+.juno-signal-track{height:4px;margin:4px 0 12px;background:rgba(0,234,255,.09);overflow:hidden;border-radius:8px;}
+.juno-signal-track span{display:block;width:18%;height:100%;background:var(--cyan);box-shadow:0 0 9px var(--cyan);transition:width .25s ease;}
+.juno-activity-heading{display:flex;justify-content:space-between;align-items:center;margin:9px 0 5px;padding-top:8px;border-top:1px solid rgba(0,234,255,.12);font-size:7px;letter-spacing:1.5px;color:rgba(205,246,255,.68);}
+.juno-activity-live{color:var(--green);font-size:6px;letter-spacing:1px;}
+.juno-activity-feed{list-style:none;margin:0;padding:0;display:grid;gap:5px;}
+.juno-activity-feed li{display:grid;grid-template-columns:55px minmax(0,1fr);gap:7px;align-items:start;padding:5px 6px;border-left:1px solid rgba(0,234,255,.25);background:rgba(0,234,255,.025);font-size:7px;line-height:1.4;}
+.juno-activity-feed li span:first-child{color:var(--cyan);letter-spacing:.7px;}
+.juno-activity-feed li span:last-child{color:rgba(220,242,247,.68);overflow-wrap:anywhere;}
+#hudStateRibbon[data-state="THINKING"]{border-color:rgba(180,130,255,.65);color:#d9c2ff;}
+#hudStateRibbon[data-state="OFFLINE"]{border-color:rgba(255,180,100,.5);color:#ffc58d;}
+.humanoid.state-thinking .chest-core{filter:brightness(1.5);}
+@media(max-width:850px){.juno-activity-feed{grid-template-columns:1fr 1fr;}.juno-activity-feed li{min-width:0;}}
+@media(max-width:520px){.juno-activity-feed{grid-template-columns:1fr;}.juno-activity-feed li{font-size:8px;}}
+@media(prefers-reduced-motion:reduce){.juno-activity-wave span{animation:none!important;transition:none!important;}}
+</style>
+
+
+<style id="juno-phase3-console-polish">
+/* Phase 3: clearer conversation hierarchy without changing the JUNO theme. */
+.juno-command-card .messages{padding:16px 14px 18px !important; gap:0;}
+.juno-command-card .console .message{
+  position:relative;
+  width:fit-content !important;
+  max-width:min(88%, 760px) !important;
+  padding:12px 14px 24px !important;
+  margin:10px 0 !important;
+  border:1px solid rgba(0,234,255,.14);
+  border-radius:12px;
+  white-space:pre-wrap !important;
+  overflow-wrap:anywhere;
+  box-shadow:0 5px 18px rgba(0,0,0,.16);
+}
+.juno-command-card .console .message::before{
+  content:attr(data-role);
+  display:block;
+  margin-bottom:6px;
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:1.8px;
+  opacity:.82;
+}
+.juno-command-card .console .message::after{
+  content:attr(data-time);
+  position:absolute;
+  right:12px;
+  bottom:7px;
+  font-size:9px;
+  letter-spacing:.4px;
+  color:rgba(220,245,250,.48);
+}
+.juno-command-card .console .message.you{
+  margin-left:auto !important;
+  margin-right:2px !important;
+  color:#f4fcff;
+  text-align:left;
+  background:linear-gradient(135deg,rgba(0,190,220,.13),rgba(0,90,120,.12));
+  border-color:rgba(0,234,255,.25);
+  border-bottom-right-radius:4px;
+}
+.juno-command-card .console .message.juno{
+  margin-right:auto !important;
+  margin-left:2px !important;
+  color:#baf7ff;
+  background:linear-gradient(135deg,rgba(25,52,76,.55),rgba(12,26,43,.72));
+  border-color:rgba(0,234,255,.16);
+  border-bottom-left-radius:4px;
+}
+@media(max-width:520px){
+  .juno-command-card .console .message{max-width:94% !important;padding:10px 11px 23px !important;}
+}
+</style>
+
+
+<style id="juno-professional-control-system">
+/* JUNO PROFESSIONAL CONTROL SYSTEM */
+button,
+.action{
+  position:relative;
+  border:1px solid rgba(0,226,255,.34);
+  border-radius:8px;
+  background:linear-gradient(180deg,rgba(10,38,54,.94),rgba(3,16,27,.96));
+  color:#dffaff;
+  font-family:inherit;
+  font-weight:700;
+  letter-spacing:1.15px;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:transform .18s ease,border-color .18s ease,background .18s ease,box-shadow .18s ease,color .18s ease;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.055),0 5px 16px rgba(0,0,0,.22);
+}
+button:hover,
+.action:hover{
+  border-color:rgba(0,234,255,.82);
+  background:linear-gradient(180deg,rgba(9,61,79,.98),rgba(3,24,39,.98));
+  color:#fff;
+  box-shadow:0 0 0 1px rgba(0,234,255,.10),0 0 18px rgba(0,234,255,.13),inset 0 1px 0 rgba(255,255,255,.08);
+  transform:translateY(-1px);
+}
+button:active,
+.action:active{transform:translateY(0);box-shadow:inset 0 2px 8px rgba(0,0,0,.28);}
+button:focus-visible,
+.action:focus-visible{
+  outline:2px solid #70f5ff;
+  outline-offset:3px;
+  box-shadow:0 0 0 5px rgba(0,234,255,.12);
+}
+button:disabled,
+.action[aria-disabled="true"]{opacity:.48;cursor:not-allowed;transform:none;box-shadow:none;}
+.action.primary,
+.console-input button{
+  border-color:rgba(0,234,255,.9);
+  background:linear-gradient(135deg,#00dff3,#168cff);
+  color:#00131b;
+  font-weight:900;
+  box-shadow:0 0 18px rgba(0,210,255,.2),inset 0 1px 0 rgba(255,255,255,.42);
+}
+.action.primary:hover,
+.console-input button:hover{
+  background:linear-gradient(135deg,#72f8ff,#45aaff);
+  color:#00131b;
+  box-shadow:0 0 24px rgba(0,234,255,.34);
+}
+.juno-mode-btn{
+  border-radius:9px;
+  min-height:52px;
+  padding:10px 12px;
+  background:linear-gradient(180deg,rgba(7,28,42,.92),rgba(2,12,22,.96));
+  border-color:rgba(0,234,255,.2);
+  text-align:left;
+}
+.juno-mode-btn.active{
+  border-color:rgba(0,234,255,.9);
+  background:linear-gradient(135deg,rgba(0,234,255,.19),rgba(18,105,160,.18) 55%,rgba(3,17,30,.96));
+  color:#aaf8ff;
+  box-shadow:inset 3px 0 0 #00eaff,0 0 20px rgba(0,234,255,.13);
+}
+.juno-mode-btn small{
+  display:block;
+  margin-top:5px;
+  color:rgba(190,229,239,.62);
+  font-size:8px;
+  letter-spacing:1.35px;
+}
+.juno-mode-btn.active small{color:#8ceeff;}
+.juno-chip{
+  border-radius:999px;
+  padding:8px 12px;
+  background:rgba(0,234,255,.055);
+  border-color:rgba(0,234,255,.24);
+  color:#c9f8ff;
+}
+.juno-chip:hover{background:rgba(0,234,255,.13);}
+.juno-approval-buttons button[onclick*="approve"]{
+  border-color:rgba(0,255,157,.52);
+  color:#a8ffe0;
+}
+.juno-approval-buttons button[onclick*="dismiss"],
+.action.stop-speech{
+  border-color:rgba(255,105,125,.42);
+  color:#ffd0d8;
+}
+.console-input button{min-width:92px;border-radius:7px;}
+@media (prefers-reduced-motion:reduce){
+  button,.action{transition:none;}
+  button:hover,.action:hover{transform:none;}
+}
+</style>
+
 </head>
 
 
@@ -8871,8 +9054,9 @@ html,body{
     </div>
 <div id="junoControlUpgrade" class="juno-upgrade-controls" aria-label="JUNO Controls">
   <button class="action primary" type="button" onclick="initializeJuno()">⚡ INITIALIZE</button>
+  <button class="action" type="button" onclick="runJunoSystemCheck()">🛠 SYSTEM CHECK</button>
   <button class="action" type="button" onclick="junoToggleListening()">🎙 LISTEN</button>
-  <button class="action" type="button" onclick="junoSpeakCurrent()">🔊 SPEAK</button>
+  <button class="action" type="button" onclick="junoSpeakCurrent()">🔊 SPEAK LAST RESPONSE</button>
   <button class="action stop-speech" type="button" onclick="junoStopSpeaking()">⏹ STOP</button>
   <label class="action" style="display:flex;align-items:center;justify-content:center;cursor:pointer;">
     📎 ATTACH FILE
@@ -8884,41 +9068,12 @@ html,body{
     <span class="panel-interaction-hint">CLICK A CONTROL</span>
 
 
-    <button
-        id="micToggleButton"
-        class="action primary mic-toggle mic-off"
-        style="width:100%;margin-bottom:7px;"
-        onclick="toggleContinuousListening()">
-
-        <span id="micModeText">MICROPHONE OFF</span>
-
-    </button>
-
-
-    <button
-        class="action"
-        style="width:100%;margin-bottom:7px;"
-        onclick="speakJuno()">
-
-        🔊 SPEECH MODE
-
-    </button>
-
-
-    <button
-        class="action"
-        style="width:100%;margin-bottom:7px;"
-        onclick="initializeJuno()">
-
-        ⚡ SYSTEM CHECK
-
-    </button>
 
 
     <button
         class="action"
         style="width:100%;"
-        onclick="messages.innerHTML=''">
+        onclick="junoClearConversation()">
 
         CLEAR CONSOLE
 
@@ -8934,7 +9089,8 @@ html,body{
     <div class="panel-title">JUNO WORK MODES</div>
     <span class="panel-interaction-hint">SELECT OPERATING MODE</span>
     <div class="juno-mode-grid" role="group" aria-label="JUNO work modes">
-        <button class="juno-mode-btn active" data-juno-mode="WORK" onclick="selectJunoMode('WORK')">WORK<small>VA ASSISTANT</small></button>
+        <button class="juno-mode-btn active" data-juno-mode="GENERAL" onclick="selectJunoMode('GENERAL')">GENERAL<small>ASK ANYTHING</small></button>
+        <button class="juno-mode-btn" data-juno-mode="WORK" onclick="selectJunoMode('WORK')">WORK<small>VA ASSISTANT</small></button>
         <button class="juno-mode-btn" data-juno-mode="JOBS" onclick="selectJunoMode('JOBS')">JOBS<small>APPLICATIONS</small></button>
         <button class="juno-mode-btn" data-juno-mode="INTERVIEW" onclick="selectJunoMode('INTERVIEW')">INTERVIEW<small>COACH</small></button>
         <button class="juno-mode-btn" data-juno-mode="AUTOMATION" onclick="selectJunoMode('AUTOMATION')">AUTOMATION<small>WORKFLOWS</small></button>
@@ -8951,31 +9107,20 @@ html,body{
     <span class="panel-interaction-hint">LIVE SIGNAL</span>
 
 
-    <div class="wave"
-         style="height:50px;">
-
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-
+    <div class="wave juno-activity-wave" id="junoActivityWave" data-state="READY" style="height:50px;" aria-label="Voice activity waveform">
+        <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
     </div>
-
 
     <div class="metric">
-
-        <span>
-            SIGNAL LEVEL
-        </span>
-
-        <span class="green">
-            ACTIVE
-        </span>
-
+        <span>SIGNAL STATUS</span>
+        <span class="green" id="junoSignalStatus">READY</span>
     </div>
+    <div class="juno-signal-track" aria-hidden="true"><span id="junoSignalBar"></span></div>
+
+    <div class="juno-activity-heading"><span>RECENT ACTIVITY</span><span class="juno-activity-live">LIVE FEED</span></div>
+    <ul class="juno-activity-feed" id="junoActivityFeed" aria-live="polite">
+        <li><span>SYSTEM</span><span>HUD monitor ready</span></li>
+    </ul>
 
 </section>
 
@@ -9831,131 +9976,209 @@ input.addEventListener(
 
 function addMessage(text,type){
 
-    const div =
-        document.createElement("div");
-
-    div.className =
-        "message " + type;
-
-    div.textContent =
-        text;
-
+    const div = document.createElement("div");
+    div.className = "message " + type;
+    div.dataset.time = new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
+    div.dataset.role = type === "you" ? "YOU" : "JUNO";
+    div.textContent = text;
     messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
 
-    messages.scrollTop =
-        messages.scrollHeight;
+    if(typeof window.junoRecordActivity === "function"){
+        const detail = String(text || "").replace(/^(YOU|JUNO):\s*/i,"").replace(/\s+/g," ").trim();
+        if(type === "you" && detail){
+            window.junoRecordActivity("COMMAND", detail);
+        }else if(type === "juno" && detail && !/^(Neural interface initialized|Awaiting system initialization)/i.test(detail)){
+            window.junoRecordActivity("JUNO", detail);
+        }
+    }
 
 }
 
 
 
+
 /* =========================================================
-   COMMAND API
+   JUNO — LOCAL QUICK COMMAND ROUTER
+   Website links are user-clicked; live search requires a backend.
 ========================================================= */
 
-let junoCommandBusy=false;
+function junoHandleQuickCommand(command){
+    const raw = String(command || "").trim();
+    const lower = raw.toLowerCase().replace(/^(hey\s+)?(juno|google)[,\s]+/i, "").trim();
+
+    const sites = {
+        youtube: "https://www.youtube.com/",
+        google: "https://www.google.com/",
+        gmail: "https://mail.google.com/",
+        facebook: "https://www.facebook.com/",
+        linkedin: "https://www.linkedin.com/"
+    };
+
+    const openMatch = lower.match(/\b(?:open|go to|launch|visit)\s+(youtube|google|gmail|facebook|linkedin)\b/i);
+    if(openMatch){
+        const site = openMatch[1].toLowerCase();
+        const openedWindow = window.open(sites[site], "_blank");
+        if(openedWindow){ try{ openedWindow.opener = null; }catch(error){} }
+        addMessage("JUNO: Opening " + site.toUpperCase() + ".", "juno");
+        speakText("Opening " + site + ".");
+        if(!openedWindow){
+            addMessage("JUNO: Your browser blocked the new tab. Please allow pop-ups for this site.", "juno");
+        }
+        return true;
+    }
+
+    if(/\b(who (?:built|created|made|developed) you|who is your (?:creator|developer)|sino ang gumawa sa iyo|sino gumawa sa iyo)\b/i.test(lower)){
+        const reply = "I'm JUNO — Jude's Neural Operations Assistant. I was designed and built by Jude Reyes as a portfolio project exploring conversational AI, voice interaction, workflow support and human-computer interaction.";
+        addMessage("JUNO: " + reply, "juno");
+        speakText(reply);
+        return true;
+    }
+
+    // All other natural-language requests go to the connected AI engine.
+    return false;
+}
+
+
+/* =========================================================
+   JUNO LIVE AI CONNECTION
+   Cloudflare Workers AI — conversation-aware frontend client
+========================================================= */
+
+const JUNO_AI_ENDPOINT = "https://juno-ai-engine.jude-reyes0618.workers.dev/";
+const JUNO_HISTORY_KEY = "juno.ai.conversation.v1";
+let junoConversationHistory = [];
+
+try{
+    const savedHistory = sessionStorage.getItem(JUNO_HISTORY_KEY);
+    if(savedHistory){
+        const parsedHistory = JSON.parse(savedHistory);
+        if(Array.isArray(parsedHistory)){
+            junoConversationHistory = parsedHistory
+                .filter(item =>
+                    item &&
+                    ["user","assistant"].includes(item.role) &&
+                    typeof item.content === "string"
+                )
+                .slice(-12);
+        }
+    }
+}catch(error){
+    console.warn("JUNO session history could not be restored.", error);
+}
+
+window.junoClearConversation = function(){
+    junoConversationHistory = [];
+    try{ sessionStorage.removeItem(JUNO_HISTORY_KEY); }catch(error){}
+    if(messages) messages.innerHTML = "";
+    addMessage("JUNO: Conversation cleared. I'm ready for a new task.", "juno");
+};
+
+async function junoRequestAI(text){
+    const activeMode = String(window.__junoActiveMode || "GENERAL").toUpperCase();
+    const modeContext = activeMode === "GENERAL"
+        ? text
+        : "[Active JUNO workspace: " + activeMode + ". Use this as helpful context, but do not restrict the conversation to this mode.]\n\nUser request: " + text;
+
+    const outgoingMessages = [
+        ...junoConversationHistory,
+        { role:"user", content:modeContext }
+    ].slice(-12);
+
+    const response = await fetch(JUNO_AI_ENDPOINT, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body:JSON.stringify({
+            messages:outgoingMessages,
+            mode:activeMode
+        })
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if(!response.ok){
+        throw new Error(data.error || data.details || ("AI service returned HTTP " + response.status));
+    }
+
+    if(!data || typeof data.reply !== "string" || !data.reply.trim()){
+        throw new Error("The AI service returned an empty response.");
+    }
+
+    const reply = data.reply.trim();
+    junoConversationHistory = [
+        ...junoConversationHistory,
+        { role:"user", content:modeContext },
+        { role:"assistant", content:reply }
+    ].slice(-12);
+
+    try{
+        sessionStorage.setItem(JUNO_HISTORY_KEY, JSON.stringify(junoConversationHistory));
+    }catch(error){
+        console.warn("JUNO could not save this tab's conversation history.", error);
+    }
+
+    return reply;
+}
+
+window.junoRequestAI = junoRequestAI;
+
+function junoConnectionErrorMessage(){
+    return "I couldn't reach the JUNO AI engine just now. Please check your connection and try again. Your message has not been lost from the console.";
+}
+
+/* =========================================================
+   COMMAND API — TEXT + VOICE USE THE SAME AI SESSION
+========================================================= */
+
+let junoCommandBusy = false;
 
 async function sendCommand(){
-
     if(junoCommandBusy) return;
 
-    const text =
-        input.value.trim();
+    const text = input.value.trim();
+    if(!text) return;
 
-    if(!text){
-
-        return;
-
-    }
-
-
-    addMessage(
-        "YOU: " + text,
-        "you"
-    );
-
-
+    addMessage("YOU: " + text, "you");
     input.value = "";
-    junoCommandBusy=true;
 
+    if(junoHandleQuickCommand(text)) return;
+
+    junoCommandBusy = true;
+    if(typeof window.setJunoHudState === "function") window.setJunoHudState("THINKING");
 
     try{
-
-        const response =
-            await fetch(
-                "/api/command",
-                {
-
-                    method:"POST",
-
-                    headers:{
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body:
-                        JSON.stringify({
-                            command:text,
-                            mode:window.__junoActiveMode || "WORK"
-                        })
-
-                }
-            );
-
-
-        const data =
-            await response.json();
-
-
-        addMessage(
-            "JUNO: " +
-            data.response,
-            "juno"
-        );
-
-
-        speakText(
-            data.response
-        );
-
-
+        const reply = await junoRequestAI(text);
+        addMessage("JUNO: " + reply, "juno");
+        await speakText(reply);
     }catch(error){
-
-        addMessage(
-            "JUNO: Command connection failed.",
-            "juno"
-        );
-
-
-        console.log(
-            "COMMAND ERROR:",
-            error
-        );
-
+        console.error("JUNO AI REQUEST ERROR:", error);
+        const message = junoConnectionErrorMessage();
+        addMessage("JUNO: " + message, "juno");
     }finally{
-        junoCommandBusy=false;
+        junoCommandBusy = false;
+        if(typeof window.setJunoHudState === "function") window.setJunoHudState("READY");
     }
-
 }
 
-
-
-/* =========================================================
-   VOICE COMMAND API
-========================================================= */
-
 async function sendVoiceCommand(text){
-    const cleaned=String(text||"").trim();
-    if(!cleaned) return;
+    const cleaned = String(text || "").trim();
+    if(!cleaned || junoCommandBusy) return;
+
+    if(junoHandleQuickCommand(cleaned)) return;
+
+    junoCommandBusy = true;
+    if(typeof window.setJunoHudState === "function") window.setJunoHudState("THINKING");
+
     try{
-        const response=await fetch("/api/command",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({command:cleaned,mode:window.__junoActiveMode||"WORK"})});
-        if(!response.ok) throw new Error("Voice command HTTP "+response.status);
-        const data=await response.json();
-        addMessage("JUNO: "+data.response,"juno");
-        await speakText(data.response);
+        const reply = await junoRequestAI(cleaned);
+        addMessage("JUNO: " + reply, "juno");
+        await speakText(reply);
     }catch(error){
-        addMessage("JUNO: Voice connection failed.","juno");
-        console.log("VOICE COMMAND ERROR:",error);
+        console.error("JUNO VOICE AI REQUEST ERROR:", error);
+        addMessage("JUNO: " + junoConnectionErrorMessage(), "juno");
+    }finally{
+        junoCommandBusy = false;
+        if(typeof window.setJunoHudState === "function") window.setJunoHudState("READY");
     }
 }
 
@@ -9964,30 +10187,53 @@ async function sendVoiceCommand(text){
    INITIALIZE
 ========================================================= */
 
+let junoInitialized = false;
+
 function initializeJuno(){
 
+    if(junoInitialized){
+        if(typeof window.setJunoHudState === "function") window.setJunoHudState("READY");
+        return;
+    }
+    junoInitialized = true;
+
     addMessage(
-        "JUNO: Neural systems initialized.",
+        "JUNO: Initialization complete. The interface is ready. Select a work mode or enter a command to begin.",
         "juno"
     );
 
+    const voiceStatus = document.getElementById("voiceStatus");
+    if(voiceStatus) voiceStatus.textContent = "ACTIVE";
 
-    const voiceStatus =
-        document.getElementById(
-            "voiceStatus"
-        );
+    speakText("JUNO initialization complete. The interface is ready for your command.");
 
-    if(voiceStatus){
+}
 
-        voiceStatus.textContent =
-            "ACTIVE";
+/* A real browser-capability check, separate from initialization and speech playback. */
+function runJunoSystemCheck(){
 
-    }
+    const speechSupported = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
+    const recognitionSupported = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+    const secure = window.isSecureContext;
+    const voiceCount = speechSupported ? window.speechSynthesis.getVoices().length : 0;
 
+    const lines = [
+        "SYSTEM CHECK COMPLETE",
+        "Interface: ONLINE",
+        "Speech output: " + (speechSupported ? "AVAILABLE" : "NOT SUPPORTED"),
+        "Microphone recognition: " + (recognitionSupported ? "AVAILABLE" : "NOT SUPPORTED"),
+        "Secure browser context: " + (secure ? "YES" : "NO"),
+        "Browser voices currently loaded: " + voiceCount,
+        "Live AI backend: CLOUDFLARE WORKERS AI — CONFIGURED"
+    ];
 
-    speakText(
-        "Hello Jude. JUNO neural systems are online."
-    );
+    const report = lines.join("\n");
+    addMessage("JUNO: " + report, "juno");
+    speakText("System check complete. Interface online. Speech output " +
+        (speechSupported ? "available" : "not supported") +
+        ". Microphone recognition " +
+        (recognitionSupported ? "available" : "not supported") +
+        ". Cloudflare Workers AI backend is configured.");
 
 }
 
@@ -10008,53 +10254,144 @@ function speakJuno(){
 
 
 /* =========================================================
-   TEXT TO SPEECH BACKEND
+   BROWSER-NATIVE TEXT TO SPEECH
+   Works on GitHub Pages without a Flask /api/speak endpoint.
 ========================================================= */
 
-let junoCurrentAudio=null;
-let junoCancelAudio=null;
+let junoCurrentAudio = null;
+let junoCancelAudio = null;
+let junoSpeechUtterance = null;
+
+let junoSpeechRunId = 0;
+
 function stopCurrentJunoAudio(){
-    if(typeof junoCancelAudio==="function"){junoCancelAudio();junoCancelAudio=null;return;}
-    if(junoCurrentAudio){try{junoCurrentAudio.pause();}catch(e){}junoCurrentAudio=null;}
-}
-async function speakText(text){
-    const cleaned=String(text||"").trim();
-    if(!cleaned) return;
-    stopCurrentJunoAudio();
-    try{
-        const response=await fetch("/api/speak",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({text:cleaned})});
-        if(!response.ok) throw new Error("TTS HTTP "+response.status);
-        const blob=await response.blob();
-        const audioURL=URL.createObjectURL(blob);
-        const audio=new Audio(audioURL);
-        junoCurrentAudio=audio;
-        document.querySelector(".humanoid")?.classList.add("speaking");
-        document.getElementById("voiceDisplay")?.classList.add("voice-active");
-        document.getElementById("voiceText").textContent="TRANSMITTING";
-        await new Promise((resolve,reject)=>{
-            let finished=false;
-            const finish=(error)=>{
-                if(finished) return; finished=true;
-                if(junoCurrentAudio===audio) junoCurrentAudio=null;
-                junoCancelAudio=null;
-                try{audio.pause();}catch(e){}
-                audio.onended=null; audio.onerror=null; URL.revokeObjectURL(audioURL);
-                document.getElementById("voiceDisplay")?.classList.remove("voice-active");
-                document.getElementById("voiceText").textContent="STANDBY";
-                document.querySelector(".humanoid")?.classList.remove("speaking");
-                if(error) reject(error); else resolve();
-            };
-            junoCancelAudio=()=>finish();
-            audio.onended=()=>finish();
-            audio.onerror=()=>finish(new Error("Audio playback failed"));
-            audio.play().catch(finish);
-        });
-    }catch(error){
-        document.getElementById("voiceText").textContent="ERROR";
-        document.querySelector(".humanoid")?.classList.remove("speaking");
-        document.getElementById("voiceDisplay")?.classList.remove("voice-active");
-        console.log("VOICE ERROR:",error);
+    junoSpeechRunId++;
+    const cancelCurrent = junoCancelAudio;
+    junoCancelAudio = null;
+    if(typeof cancelCurrent === "function"){
+        try{ cancelCurrent(); }catch(error){}
+    }else{
+        try{
+            if(window.speechSynthesis) window.speechSynthesis.cancel();
+        }catch(error){}
     }
+    junoSpeechUtterance = null;
+    if(junoCurrentAudio){
+        try{ junoCurrentAudio.pause(); }catch(error){}
+        junoCurrentAudio = null;
+    }
+}
+
+async function speakText(text){
+    const cleaned = String(text || "").trim();
+    if(!cleaned) return;
+
+    if(!("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)){
+        const voiceText = document.getElementById("voiceText");
+        if(voiceText) voiceText.textContent = "VOICE NOT SUPPORTED";
+        console.warn("JUNO: Browser speech synthesis is not supported.");
+        return;
+    }
+
+    stopCurrentJunoAudio();
+    const speechRunId = junoSpeechRunId;
+
+    const voiceText = document.getElementById("voiceText");
+    const voiceDisplay = document.getElementById("voiceDisplay");
+    const humanoid = document.querySelector(".humanoid");
+
+    const utterance = new SpeechSynthesisUtterance(cleaned);
+    const hasFilipinoText = /\\b(kaya|mo|ba|bakit|hindi|di|tagalog|filipino|kumanta|kanta|wala|akong|pakialam|ayusin|trabaho|sino|ano|paano|pwede|puwede|salamat|kilala|ako)\\b/i.test(cleaned);
+    utterance.lang = hasFilipinoText ? "fil-PH" : "en-US";
+    utterance.rate = 1;
+    utterance.pitch = 0.95;
+    utterance.volume = 1;
+
+    // Prefer an available English male voice while keeping browser-native TTS.
+    // Voice names vary by Windows version and installed speech packs.
+    let voices = window.speechSynthesis.getVoices();
+
+    if(!voices.length){
+        voices = await new Promise(resolve => {
+            let settled = false;
+            const finish = () => {
+                if(settled) return;
+                settled = true;
+                window.speechSynthesis.removeEventListener("voiceschanged", onVoicesChanged);
+                resolve(window.speechSynthesis.getVoices());
+            };
+            const onVoicesChanged = () => finish();
+            window.speechSynthesis.addEventListener("voiceschanged", onVoicesChanged);
+            setTimeout(finish, 900);
+        });
+    }
+
+    if(speechRunId !== junoSpeechRunId) return;
+
+    const filipinoVoices = voices.filter(voice => /^(fil|tl)([_-]|$)/i.test(voice.lang) || /filipino|tagalog/i.test(voice.name));
+    const englishVoices = voices.filter(voice => /^en([_-]|$)/i.test(voice.lang));
+    const femaleVoicePattern = /\b(zira|aria|jenny|michelle|samantha|victoria|karen|susan)\b/i;
+
+    // JUNO voice priority: Microsoft Mark (US), Microsoft David (US),
+    // then Google UK English Male. Only choose voices actually available.
+    let preferredVoice = hasFilipinoText
+        ? (filipinoVoices[0] || null)
+        : englishVoices.find(voice => /microsoft mark/i.test(voice.name)) ||
+        englishVoices.find(voice => /microsoft david/i.test(voice.name)) ||
+        englishVoices.find(voice => /google uk english male/i.test(voice.name));
+
+    if(!preferredVoice && !hasFilipinoText){
+        preferredVoice = englishVoices.find(voice =>
+            !femaleVoicePattern.test(voice.name) &&
+            /microsoft|natural|neural/i.test(voice.name)
+        );
+    }
+
+    if(!preferredVoice && !hasFilipinoText){
+        preferredVoice = englishVoices.find(voice => /^en[-_]US/i.test(voice.lang))
+            || englishVoices[0]
+            || null;
+    }
+
+    if(preferredVoice) utterance.voice = preferredVoice;
+    utterance.pitch = 0.88;
+
+    junoSpeechUtterance = utterance;
+    if(voiceText) voiceText.textContent = "TRANSMITTING";
+    voiceDisplay?.classList.add("voice-active");
+    humanoid?.classList.add("speaking");
+    if(typeof window.setJunoHudState === "function") window.setJunoHudState("SPEAKING");
+
+    await new Promise(resolve => {
+        let finished = false;
+        const finish = () => {
+            if(finished) return;
+            finished = true;
+            const isCurrentSpeech = speechRunId === junoSpeechRunId;
+            if(junoSpeechUtterance === utterance) junoSpeechUtterance = null;
+            if(isCurrentSpeech){
+                junoCancelAudio = null;
+                if(voiceText) voiceText.textContent = "STANDBY";
+                voiceDisplay?.classList.remove("voice-active");
+                humanoid?.classList.remove("speaking");
+                if(typeof window.setJunoHudState === "function") window.setJunoHudState("READY");
+            }
+            resolve();
+        };
+        utterance.onend = finish;
+        utterance.onerror = finish;
+        utterance.oncancel = finish;
+        junoCancelAudio = () => {
+            try{ window.speechSynthesis.cancel(); }catch(error){}
+            finish();
+        };
+        try{
+            window.speechSynthesis.speak(utterance);
+        }catch(error){
+            console.error("JUNO BROWSER VOICE ERROR:", error);
+            finish();
+        }
+    });
 }
 
 
@@ -10126,7 +10463,12 @@ function startRecognitionSession(){if(!junoContinuousMode||junoResponseBusy||jun
 
     function setJunoHudState(state){
 
-        const current = state || "READY";
+        const previous = window.__junoHudState || "";
+        const current = state === "PROCESSING" ? "THINKING" : (state || "READY");
+        window.__junoHudState = current;
+        if(previous && previous !== current && typeof window.junoRecordActivity === "function"){
+            window.junoRecordActivity("STATE", current);
+        }
 
         const infoState =
             document.getElementById("junoInfoLiveState");
@@ -10154,10 +10496,7 @@ function startRecognitionSession(){if(!junoContinuousMode||junoResponseBusy||jun
         }
 
         if(infoInput){
-            infoInput.textContent =
-                current === "LISTENING"
-                    ? "ACTIVE"
-                    : "READY";
+            infoInput.textContent = current === "LISTENING" ? "ACTIVE" : current === "THINKING" ? "PROCESSING" : "READY";
         }
 
         if(infoOutput){
@@ -10168,21 +10507,11 @@ function startRecognitionSession(){if(!junoContinuousMode||junoResponseBusy||jun
         }
 
         if(infoSub){
-            infoSub.textContent =
-                current === "LISTENING"
-                    ? "NEURAL INPUT ACTIVE"
-                    : current === "PROCESSING"
-                        ? "NEURAL PATHWAY ACTIVE"
-                        : current === "SPEAKING"
-                            ? "AUDIO TRANSMISSION ACTIVE"
-                            : "NEURAL SYSTEM STABLE";
+            infoSub.textContent = current === "LISTENING" ? "NEURAL INPUT ACTIVE" : current === "THINKING" ? "REQUEST PROCESSING" : current === "SPEAKING" ? "AUDIO TRANSMISSION ACTIVE" : current === "OFFLINE" ? "LOCAL DEMO MODE" : "NEURAL SYSTEM STABLE";
         }
 
         if(inputMode){
-            inputMode.textContent =
-                current === "LISTENING"
-                    ? "ACTIVE"
-                    : "READY";
+            inputMode.textContent = current === "LISTENING" ? "ACTIVE" : current === "THINKING" ? "PROCESSING" : "READY";
         }
 
         if(outputState){
@@ -10193,30 +10522,22 @@ function startRecognitionSession(){if(!junoContinuousMode||junoResponseBusy||jun
         }
 
         if(visualActivity){
-            visualActivity.textContent =
-                current === "LISTENING"
-                    ? "HIGH"
-                    : current === "PROCESSING"
-                        ? "PEAK"
-                        : current === "SPEAKING"
-                            ? "ACTIVE"
-                            : "NORMAL";
+            visualActivity.textContent = current === "LISTENING" ? "HIGH" : current === "THINKING" ? "PEAK" : current === "SPEAKING" ? "ACTIVE" : current === "OFFLINE" ? "LOW" : "NORMAL";
         }
         const listening = current === "LISTENING";
+        const thinking = current === "THINKING";
         const speaking = current === "SPEAKING";
+        const signalStatus = document.getElementById("junoSignalStatus");
+        const signalBar = document.getElementById("junoSignalBar");
+        const activityWave = document.getElementById("junoActivityWave");
+        if(signalStatus) signalStatus.textContent = current;
+        if(signalBar) signalBar.style.width = current === "LISTENING" ? "78%" : thinking ? "92%" : speaking ? "68%" : current === "OFFLINE" ? "10%" : "18%";
+        if(activityWave) activityWave.dataset.state = current;
 
         if(stateRibbon){
-            stateRibbon.textContent =
-                listening
-                    ? "LISTENING // INPUT ACTIVE"
-                    : speaking
-                        ? "SPEAKING // OUTPUT ACTIVE"
-                        : "SYSTEM READY";
-
-            stateRibbon.classList.toggle(
-                "active",
-                listening || speaking
-            );
+            stateRibbon.textContent = listening ? "LISTENING // INPUT ACTIVE" : thinking ? "THINKING // REQUEST PROCESSING" : speaking ? "SPEAKING // OUTPUT ACTIVE" : current === "OFFLINE" ? "OFFLINE // LOCAL DEMO" : "SYSTEM READY";
+            stateRibbon.dataset.state = current;
+            stateRibbon.classList.toggle("active", listening || thinking || speaking);
         }
 
         if(infoState){
@@ -10228,21 +10549,11 @@ function startRecognitionSession(){if(!junoContinuousMode||junoResponseBusy||jun
         }
 
         if(voiceEngine){
-            voiceEngine.textContent =
-                listening
-                    ? "LISTENING"
-                    : speaking
-                        ? "TRANSMITTING"
-                        : "READY";
+            voiceEngine.textContent = listening ? "LISTENING" : thinking ? "THINKING" : speaking ? "TRANSMITTING" : current === "OFFLINE" ? "OFFLINE" : "READY";
         }
 
         if(neuralState){
-            neuralState.textContent =
-                listening
-                    ? "HIGH"
-                    : speaking
-                        ? "TRANSMITTING"
-                        : "NORMAL";
+            neuralState.textContent = listening ? "HIGH" : thinking ? "PROCESSING" : speaking ? "TRANSMITTING" : "NORMAL";
         }
 
         if(humanoid){
@@ -10251,10 +10562,8 @@ function startRecognitionSession(){if(!junoContinuousMode||junoResponseBusy||jun
                 listening
             );
 
-            humanoid.classList.toggle(
-                "state-speaking",
-                speaking
-            );
+            humanoid.classList.toggle("state-speaking", speaking);
+            humanoid.classList.toggle("state-thinking", thinking);
         }
     }
 
@@ -10305,35 +10614,9 @@ function startRecognitionSession(){if(!junoContinuousMode||junoResponseBusy||jun
 })();
 
 /* =========================================================
-   KEEP EXISTING VOICE FUNCTIONS IN CHARGE
-   This only updates the visual HUD state.
+   VOICE HUD STATE IS CONTROLLED BY speakText ITSELF.
+   Avoid an outer wrapper resetting a newer speech request.
 ========================================================= */
-
-(function(){
-
-    const originalSpeakText = window.speakText;
-
-    if(typeof originalSpeakText === "function"){
-
-        window.speakText = async function(text){
-
-            if(typeof window.setJunoHudState === "function"){
-                window.setJunoHudState("SPEAKING");
-            }
-
-            try{
-                return await originalSpeakText(text);
-            }finally{
-                if(typeof window.setJunoHudState === "function"){
-                    window.setJunoHudState("READY");
-                }
-            }
-
-        };
-
-    }
-
-})();
 
 
 
@@ -10342,13 +10625,14 @@ function startRecognitionSession(){if(!junoContinuousMode||junoResponseBusy||jun
 ========================================================= */
 (function(){
     const configs = {
+        GENERAL:{title:"GENERAL AI ASSISTANT",copy:"Ask anything, explore ideas, draft and improve writing, translate text and solve everyday problems with JUNO conversational AI.",actions:["EXPLAIN A TOPIC","WRITE / REWRITE","BRAINSTORM IDEAS"]},
         WORK:{title:"WORK ASSISTANT",copy:"Organize client work, summarize instructions, create checklists and draft practical SOPs.",actions:["SUMMARIZE","MAKE CHECKLIST","CREATE SOP"]},
         JOBS:{title:"JOB APPLICATIONS",copy:"Analyze a job posting, compare it with your real experience, identify gaps and prepare an honest application strategy.",actions:["ANALYZE JOB","FIT / GAP","APPLICATION PLAN"]},
         INTERVIEW:{title:"INTERVIEW COACH",copy:"Practice Technical VA interviews, improve structure and receive communication coaching without exaggerating your experience.",actions:["START MOCK","ANSWER REVIEW","RETRY"]},
         AUTOMATION:{title:"AUTOMATION SPECIALIST",copy:"Turn a business request into a workflow plan with triggers, actions, data handling and error checks before execution.",actions:["PLAN WORKFLOW","MAKE.COM PLAN","ZAPIER PLAN"]},
         CLIENT:{title:"CLIENT TASKS",copy:"Convert client messages into prioritized tasks, a clear sequence of work and a professional completion update.",actions:["PARSE TASK","PRIORITIZE","CLIENT UPDATE"]}
     };
-    let activeMode = "WORK";
+    let activeMode = "GENERAL";
     let pendingPlan = false;
 
     function modeMessage(mode){
@@ -10384,6 +10668,9 @@ function startRecognitionSession(){if(!junoContinuousMode||junoResponseBusy||jun
 
     window.runJunoModeAction=function(action){
         const prompts={
+            "EXPLAIN A TOPIC":"Explain this topic in simple, clear language. If no topic is provided, ask me what I want explained.",
+            "WRITE / REWRITE":"Help me write or improve this text. Ask me to provide the text and desired tone if missing.",
+            "BRAINSTORM IDEAS":"Help me brainstorm practical ideas. Ask for the topic or goal if missing.",
             "SUMMARIZE":"Summarize these client instructions into the key actions.",
             "MAKE CHECKLIST":"Turn these instructions into a prioritized checklist.",
             "CREATE SOP":"Create a clear SOP from these notes.",
@@ -10424,7 +10711,7 @@ function startRecognitionSession(){if(!junoContinuousMode||junoResponseBusy||jun
         if(typeof addMessage === "function") addMessage("JUNO: Action plan cancelled.","juno");
     };
 
-    document.addEventListener("DOMContentLoaded",()=>selectJunoMode("WORK"));
+    document.addEventListener("DOMContentLoaded",()=>selectJunoMode("GENERAL"));
 })();
 
 /* Add selected mode to the existing backend request without replacing the backend. */
@@ -10436,12 +10723,12 @@ function startRecognitionSession(){if(!junoContinuousMode||junoResponseBusy||jun
         const text=input ? input.value.trim() : "";
         if(!text) return;
         const messages=document.getElementById("messages");
-        if(messages) messages.dataset.activeMode=(window.__junoActiveMode||"WORK");
+        if(messages) messages.dataset.activeMode=(window.__junoActiveMode||"GENERAL");
         return originalSendCommand.apply(this,arguments);
     };
 })();
 
-window.__junoActiveMode="WORK";
+window.__junoActiveMode="GENERAL";
 const _selectJunoMode=window.selectJunoMode;
 window.selectJunoMode=function(mode){ window.__junoActiveMode=mode; return _selectJunoMode(mode); };
 </script>
@@ -10462,8 +10749,28 @@ window.selectJunoMode=function(mode){ window.__junoActiveMode=mode; return _sele
 
   const $ = (id) => document.getElementById(id);
 
+  window.junoRecordActivity = function(kind, detail){
+    const feed = $("junoActivityFeed");
+    if(!feed) return;
+    const item = document.createElement("li");
+    const label = document.createElement("span");
+    const message = document.createElement("span");
+    label.textContent = String(kind || "EVENT").toUpperCase().slice(0,12);
+    const clean = String(detail || "").replace(/\s+/g," ").trim();
+    message.textContent = clean.length > 78 ? clean.slice(0,75) + "…" : clean;
+    item.append(label,message);
+    feed.prepend(item);
+    while(feed.children.length > 5) feed.lastElementChild.remove();
+  };
+
+  window.junoRecordActivity("SYSTEM","Activity monitor online");
+
   function stopSpeechNow(){
-    try{ window.speechSynthesis?.cancel(); }catch(e){}
+    if(typeof window.stopCurrentJunoAudio === "function"){
+      try{ window.stopCurrentJunoAudio(); }catch(e){}
+    }else{
+      try{ window.speechSynthesis?.cancel(); }catch(e){}
+    }
     pendingSpeech = [];
     speechActive = false;
     try{
@@ -10526,27 +10833,45 @@ window.selectJunoMode=function(mode){ window.__junoActiveMode=mode; return _sele
       let finalText = "";
       let interim = "";
       for(let i = event.resultIndex; i < event.results.length; i++){
-        const text = event.results[i][0].transcript;
-        if(event.results[i].isFinal) finalText += text;
-        else interim += text;
+        const transcript = event.results[i][0].transcript;
+        if(event.results[i].isFinal) finalText += transcript;
+        else interim += transcript;
       }
+
+      // Show live speech recognition in the command box, not only in the HUD.
+      const commandBox = $("commandInput");
+      const recognizedText = (finalText || interim).trim();
+      if(commandBox && recognizedText){
+        commandBox.value = recognizedText;
+      }
+
       if(interim){
         const vt = $("voiceText");
         if(vt) vt.textContent = interim;
       }
+
       if(finalText.trim()){
         lastTranscript = finalText.trim();
         lastTranscriptAt = Date.now();
+        if(commandBox) commandBox.value = lastTranscript;
         clearTimeout(silenceTimer);
-        silenceTimer = setTimeout(() => {
+        silenceTimer = setTimeout(async () => {
           if(lastTranscript && !commandInFlight && !speechActive){
-            const text = lastTranscript;
+            const text = lastTranscript.trim();
             lastTranscript = "";
-            if(typeof sendVoiceCommand === "function"){
-              sendVoiceCommand(text);
-            } else if(typeof sendCommand === "function"){
-              const input = $("commandInput");
-              if(input){ input.value = text; sendCommand(); }
+            commandInFlight = true;
+            const input = $("commandInput");
+            if(input) input.value = text;
+            if(typeof addMessage === "function") addMessage("YOU: " + text, "you");
+            try{
+              if(typeof sendVoiceCommand === "function"){
+                await sendVoiceCommand(text);
+              } else if(typeof sendCommand === "function"){
+                if(input) sendCommand();
+              }
+            }finally{
+              commandInFlight = false;
+              if(input && input.value.trim() === text) input.value = "";
             }
           }
         }, 2200);
@@ -10570,17 +10895,15 @@ window.selectJunoMode=function(mode){ window.__junoActiveMode=mode; return _sele
   };
 
   window.junoSpeakCurrent = function(){
-    if(typeof speakJuno === "function") speakJuno();
-    else {
-      const msgs = document.querySelectorAll(".message.juno");
-      const last = msgs[msgs.length-1]?.innerText || "";
-      if(last){
-        stopSpeechNow();
-        const u = new SpeechSynthesisUtterance(last.replace(/^JUNO:\s*/i,""));
-        speechActive = true;
-        u.onend = () => { speechActive = false; try{ if(typeof window.setJunoHudState === "function") window.setJunoHudState("READY"); }catch(e){} };
-        window.speechSynthesis.speak(u);
-      }
+    const msgs = document.querySelectorAll(".message.juno");
+    const last = msgs[msgs.length-1]?.innerText || "";
+    const text = last.replace(/^JUNO:\s*/i,"").trim();
+    if(!text) return;
+    stopSpeechNow();
+    if(typeof window.speakText === "function"){
+      window.speakText(text);
+    }else if(typeof speakText === "function"){
+      speakText(text);
     }
   };
 
@@ -10593,36 +10916,49 @@ window.selectJunoMode=function(mode){ window.__junoActiveMode=mode; return _sele
       if(!command && !stagedFile) return;
 
       commandInFlight = true;
-      if(stagedFile && typeof addMessage === "function"){
-        addMessage(`YOU: ${command || "Process attached file"} [Attachment: ${stagedFile.name}]`, "you");
-      }
       try{
-        // Preserve existing function for text commands.
         if(command && !stagedFile){
           return await originalSendCommand();
         }
 
-        // For staged files, prefer a file-aware endpoint if present; otherwise send a clear text hint.
         if(stagedFile){
-          const fd = new FormData();
-          fd.append("command", command || "Process the attached file.");
-          fd.append("file", stagedFile);
-          const modeEl = $("junoModeSelect") || $("modeSelect");
-          if(modeEl) fd.append("mode", modeEl.value || "");
-          const res = await fetch("/api/command", {method:"POST", body:fd});
-          if(!res.ok) throw new Error(`HTTP ${res.status}`);
-          const data = await res.json();
-          if(data?.response && typeof addMessage === "function") addMessage("JUNO: " + data.response, "juno");
+          const supportedTextFile = /\.(txt|md|csv|json|log)$/i.test(stagedFile.name) ||
+            (stagedFile.type && stagedFile.type.startsWith("text/"));
+
+          if(!supportedTextFile){
+            if(typeof addMessage === "function"){
+              addMessage("JUNO: This demo can currently read text attachments (.txt, .md, .csv, .json and .log). For PDFs, Word files or images, please paste the relevant text into the console for now.", "juno");
+            }
+            return;
+          }
+
+          const fileText = await stagedFile.text();
+          const task = command || "Please review and summarize the attached text file.";
+          const attachmentPrompt = task +
+            "\n\n[Attached text file: " + stagedFile.name + "]\n" +
+            fileText.slice(0, 14000) +
+            (fileText.length > 14000 ? "\n[The remaining file text was omitted because of the demo input limit.]" : "");
+
+          if(typeof addMessage === "function"){
+            addMessage("YOU: " + task + " [Attachment: " + stagedFile.name + "]", "you");
+          }
+          if(typeof window.setJunoHudState === "function") window.setJunoHudState("THINKING");
+
+          const reply = await window.junoRequestAI(attachmentPrompt);
+          if(typeof addMessage === "function") addMessage("JUNO: " + reply, "juno");
+          if(typeof speakText === "function") await speakText(reply);
+
           if(input) input.value = "";
           stagedFile = null;
           if(attach) attach.value = "";
           updateAttachmentStatus();
         }
       }catch(err){
-        if(typeof addMessage === "function") addMessage("JUNO: I couldn't process that request.", "juno");
-        console.error(err);
+        if(typeof addMessage === "function") addMessage("JUNO: I couldn't process that request. Please try again.", "juno");
+        console.error("JUNO attachment processing error:", err);
       }finally{
         commandInFlight = false;
+        if(typeof window.setJunoHudState === "function") window.setJunoHudState("READY");
       }
     };
   }
