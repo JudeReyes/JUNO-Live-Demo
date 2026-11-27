@@ -8945,6 +8945,93 @@ button:disabled,
 }
 </style>
 
+
+<style id="juno-fixed-chat-voice-patch">
+/* Fixed conversation viewport: only the message history scrolls. */
+.juno-command-card{
+  flex:0 0 420px !important;
+  height:420px !important;
+  min-height:420px !important;
+  max-height:420px !important;
+  overflow:hidden !important;
+}
+.juno-command-card .console{
+  display:grid !important;
+  grid-template-rows:minmax(0,1fr) 42px 54px !important;
+  flex:1 1 auto !important;
+  height:calc(100% - 34px) !important;
+  min-height:0 !important;
+  max-height:none !important;
+  overflow:hidden !important;
+}
+.juno-command-card .console .messages{
+  min-height:0 !important;
+  height:100% !important;
+  max-height:100% !important;
+  overflow-y:auto !important;
+  overflow-x:hidden !important;
+  overscroll-behavior:contain;
+  scrollbar-gutter:stable;
+}
+.juno-chat-toolbar{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  min-width:0;
+  padding:4px 9px;
+  border-top:1px solid rgba(0,234,255,.10);
+  border-bottom:1px solid rgba(0,234,255,.10);
+  background:rgba(0,234,255,.025);
+  overflow-x:auto;
+  scrollbar-width:thin;
+}
+.juno-chat-control{
+  flex:0 0 auto;
+  min-height:30px;
+  padding:5px 10px;
+  border:1px solid rgba(0,234,255,.25);
+  border-radius:5px;
+  background:rgba(0,234,255,.055);
+  color:#c9f8ff;
+  font:700 9px/1.2 Inter,"Segoe UI",sans-serif;
+  letter-spacing:.65px;
+  cursor:pointer;
+  white-space:nowrap;
+}
+.juno-chat-control:hover,.juno-chat-control:focus-visible{
+  border-color:var(--cyan,#00eaff);
+  background:rgba(0,234,255,.13);
+  color:#fff;
+  outline:none;
+}
+.juno-chat-control.listen{border-color:rgba(65,220,170,.45);color:#a8ffe0;}
+.juno-chat-control.stop{border-color:rgba(255,100,100,.48);color:#ffd1d1;}
+.juno-chat-control.attach{display:inline-flex;align-items:center;justify-content:center;}
+.juno-command-card .console .console-input{
+  min-height:54px !important;
+  height:54px !important;
+}
+@media(max-width:850px){
+  .juno-command-card{
+    flex:0 0 420px !important;
+    height:420px !important;
+    min-height:420px !important;
+    max-height:420px !important;
+  }
+}
+@media(max-width:520px){
+  .juno-command-card{
+    flex-basis:430px !important;
+    height:430px !important;
+    min-height:430px !important;
+    max-height:430px !important;
+  }
+  .juno-chat-toolbar{gap:5px;padding:4px 6px;}
+  .juno-chat-control{padding:5px 8px;font-size:8px;}
+}
+/* The remaining system controls stay in the side panel; voice controls are docked to chat. */
+</style>
+
 </head>
 
 
@@ -9052,16 +9139,9 @@ button:disabled,
     <div class="panel-title">
         JUNO CONTROL
     </div>
-<div id="junoControlUpgrade" class="juno-upgrade-controls" aria-label="JUNO Controls">
+<div id="junoControlUpgrade" class="juno-upgrade-controls" aria-label="JUNO System Controls">
   <button class="action primary" type="button" onclick="initializeJuno()">⚡ INITIALIZE</button>
   <button class="action" type="button" onclick="runJunoSystemCheck()">🛠 SYSTEM CHECK</button>
-  <button class="action" type="button" onclick="junoToggleListening()">🎙 LISTEN</button>
-  <button class="action" type="button" onclick="junoSpeakCurrent()">🔊 SPEAK LAST RESPONSE</button>
-  <button class="action stop-speech" type="button" onclick="junoStopSpeaking()">⏹ STOP</button>
-  <label class="action" style="display:flex;align-items:center;justify-content:center;cursor:pointer;">
-    📎 ATTACH FILE
-    <input type="file" id="junoAttachUpgrade" hidden>
-  </label>
 </div>
 <div id="junoAttachmentStatus" class="juno-attachment-status"></div>
 
@@ -9441,6 +9521,16 @@ button:disabled,
 
         </div>
 
+    </div>
+
+    <div class="juno-chat-toolbar" role="toolbar" aria-label="Conversation voice controls">
+        <button class="juno-chat-control listen" type="button" onclick="junoToggleListening()" title="Record a voice command">🎙 LISTEN</button>
+        <button class="juno-chat-control" type="button" onclick="junoSpeakCurrent()" title="Speak the latest JUNO response">🔊 SPEAK</button>
+        <button class="juno-chat-control stop" type="button" onclick="junoStopSpeaking()" title="Stop audio or microphone">⏹ STOP</button>
+        <button class="juno-chat-control" type="button" onclick="junoShareLocation()" title="Share your location only after browser permission">📍 SHARE LOCATION</button>
+        <label class="juno-chat-control attach" for="junoAttachUpgrade" title="Attach a supported text file">📎 ATTACH
+            <input type="file" id="junoAttachUpgrade" hidden>
+        </label>
     </div>
 
     <div class="console-input">
@@ -9981,8 +10071,11 @@ function addMessage(text,type){
     div.dataset.time = new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
     div.dataset.role = type === "you" ? "YOU" : "JUNO";
     div.textContent = text;
+    const wasNearBottom = messages.scrollHeight - messages.scrollTop - messages.clientHeight < 56;
     messages.appendChild(div);
-    messages.scrollTop = messages.scrollHeight;
+    if(wasNearBottom){
+        messages.scrollTop = messages.scrollHeight;
+    }
 
     if(typeof window.junoRecordActivity === "function"){
         const detail = String(text || "").replace(/^(YOU|JUNO):\s*/i,"").replace(/\s+/g," ").trim();
@@ -10006,6 +10099,18 @@ function addMessage(text,type){
 function junoHandleQuickCommand(command){
     const raw = String(command || "").trim();
     const lower = raw.toLowerCase().replace(/^(hey\s+)?(juno|google)[,\s]+/i, "").trim();
+
+    // Browser time is deterministic and local to the person viewing the demo.
+    if(/\b(what(?:'s| is) the time|what time is it|current time|time now|tell me the time|my local time|anong oras na|anong oras ngayon|oras na ngayon)\b/i.test(lower)){
+        const now = new Date();
+        const time = new Intl.DateTimeFormat(undefined,{hour:"numeric",minute:"2-digit",second:"2-digit",hour12:true}).format(now);
+        const date = new Intl.DateTimeFormat(undefined,{weekday:"long",year:"numeric",month:"long",day:"numeric"}).format(now);
+        const zone = Intl.DateTimeFormat().resolvedOptions().timeZone || "local device timezone";
+        const reply = "Your device's local time is " + time + " on " + date + " (" + zone + ").";
+        addMessage("JUNO: " + reply, "juno");
+        speakText(reply);
+        return true;
+    }
 
     const sites = {
         youtube: "https://www.youtube.com/",
@@ -10080,10 +10185,16 @@ async function junoRequestAI(text){
         ? text
         : "[Active JUNO workspace: " + activeMode + ". Use this as helpful context, but do not restrict the conversation to this mode.]\n\nUser request: " + text;
 
+    const clientContext = junoBuildClientContext();
     const outgoingMessages = [
-        ...junoConversationHistory,
+        {
+            role:"system",
+            content:"JUNO CLIENT CONTEXT (trusted browser-provided data): " + clientContext +
+                "\nUse this exact local date, time and IANA timezone when answering questions about the viewer's current time. Never guess a time. The timezone is not proof of the viewer's precise location or nationality. Only refer to GPS coordinates if the viewer explicitly granted location permission; coordinates are not an exact street address. If no location permission is present, say that precise location has not been shared. Do not claim that Gemini is the active model."
+        },
+        ...junoConversationHistory.slice(-10),
         { role:"user", content:modeContext }
-    ].slice(-12);
+    ];
 
     const response = await fetch(JUNO_AI_ENDPOINT, {
         method:"POST",
@@ -10121,6 +10232,25 @@ async function junoRequestAI(text){
 }
 
 window.junoRequestAI = junoRequestAI;
+
+function junoBuildClientContext(){
+    const now = new Date();
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone || "Unknown timezone";
+    const locale = Intl.DateTimeFormat().resolvedOptions().locale || navigator.language || "Unknown locale";
+    const localDateTime = new Intl.DateTimeFormat(undefined,{
+        dateStyle:"full", timeStyle:"long"
+    }).format(now);
+    const location = (window.__junoSharedBrowserLocation)
+        ? JSON.stringify(window.__junoSharedBrowserLocation)
+        : "Not shared; no GPS permission has been granted in this session.";
+    return JSON.stringify({
+        local_date_time:localDateTime,
+        timezone,
+        locale,
+        utc_offset_minutes:now.getTimezoneOffset(),
+        gps_location:location
+    });
+}
 
 function junoConnectionErrorMessage(){
     return "I couldn't reach the JUNO AI engine just now. Please check your connection and try again. Your message has not been lost from the console.";
@@ -10197,15 +10327,14 @@ function initializeJuno(){
     }
     junoInitialized = true;
 
-    addMessage(
-        "JUNO: Initialization complete. The interface is ready. Select a work mode or enter a command to begin.",
-        "juno"
-    );
+    const announcement = "JUNO: Initialization complete. The interface is ready. Select a work mode or enter a command to begin.";
+    addMessage(announcement, "juno");
 
     const voiceStatus = document.getElementById("voiceStatus");
     if(voiceStatus) voiceStatus.textContent = "ACTIVE";
 
-    speakText("JUNO initialization complete. The interface is ready for your command.");
+    // Use the exact same announcement text for the console and speech output.
+    speakText(announcement.replace(/^JUNO:\s*/i, ""));
 
 }
 
@@ -10229,11 +10358,8 @@ function runJunoSystemCheck(){
 
     const report = lines.join("\n");
     addMessage("JUNO: " + report, "juno");
-    speakText("System check complete. Interface online. Speech output " +
-        (speechSupported ? "available" : "not supported") +
-        ". Microphone recognition " +
-        (recognitionSupported ? "available" : "not supported") +
-        ". Cloudflare Workers AI backend is configured.");
+    // Speak the same status report that the user sees in the console.
+    speakText(report);
 
 }
 
@@ -10301,7 +10427,7 @@ async function speakText(text){
     const humanoid = document.querySelector(".humanoid");
 
     const utterance = new SpeechSynthesisUtterance(cleaned);
-    const hasFilipinoText = /\\b(kaya|mo|ba|bakit|hindi|di|tagalog|filipino|kumanta|kanta|wala|akong|pakialam|ayusin|trabaho|sino|ano|paano|pwede|puwede|salamat|kilala|ako)\\b/i.test(cleaned);
+    const hasFilipinoText = /\b(kaya|mo|ba|bakit|hindi|di|tagalog|filipino|kumanta|kanta|wala|akong|pakialam|ayusin|trabaho|sino|ano|paano|pwede|puwede|salamat|kilala|ako|oras|ngayon|saan|bakit|pakiusap)\b/i.test(cleaned);
     utterance.lang = hasFilipinoText ? "fil-PH" : "en-US";
     utterance.rate = 1;
     utterance.pitch = 0.95;
@@ -10766,6 +10892,12 @@ window.selectJunoMode=function(mode){ window.__junoActiveMode=mode; return _sele
   window.junoRecordActivity("SYSTEM","Activity monitor online");
 
   function stopSpeechNow(){
+    if(recognitionRunning && recognition){
+      try{ recognition.stop(); }catch(e){}
+      recognitionRunning = false;
+      const listenButton = document.querySelector(".juno-chat-control.listen");
+      if(listenButton) listenButton.textContent = "🎙 LISTEN";
+    }
     if(typeof window.stopCurrentJunoAudio === "function"){
       try{ window.stopCurrentJunoAudio(); }catch(e){}
     }else{
@@ -10814,84 +10946,96 @@ window.selectJunoMode=function(mode){ window.__junoActiveMode=mode; return _sele
       try{ recognition.stop(); }catch(e){}
       return;
     }
-    if(!("webkitSpeechRecognition" in window)){
-      alert("Chrome speech recognition is not supported in this browser.");
+    const Recognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if(!Recognition){
+      alert("Speech recognition is not supported in this browser. Please use a current version of Chrome or Edge.");
       return;
     }
-    recognition = new webkitSpeechRecognition();
+    recognition = new Recognition();
     recognition.lang = "en-US";
     recognition.continuous = false;
     recognition.interimResults = true;
+    lastTranscript = "";
 
     recognition.onstart = () => {
       recognitionRunning = true;
       try{ if(typeof window.setJunoHudState === "function") window.setJunoHudState("LISTENING"); }catch(e){}
-      const vt = $("voiceText"); if(vt) vt.textContent = "LISTENING";
+      const vt = $("voiceText"); if(vt) vt.textContent = "LISTENING — SPEAK NOW";
+      const listenButton = document.querySelector(".juno-chat-control.listen");
+      if(listenButton) listenButton.textContent = "🎙 LISTENING…";
     };
 
     recognition.onresult = (event) => {
       let finalText = "";
       let interim = "";
       for(let i = event.resultIndex; i < event.results.length; i++){
-        const transcript = event.results[i][0].transcript;
-        if(event.results[i].isFinal) finalText += transcript;
-        else interim += transcript;
+        const transcript = event.results[i][0].transcript.trim();
+        if(!transcript) continue;
+        if(event.results[i].isFinal) finalText += (finalText ? " " : "") + transcript;
+        else interim += (interim ? " " : "") + transcript;
       }
-
-      // Show live speech recognition in the command box, not only in the HUD.
       const commandBox = $("commandInput");
       const recognizedText = (finalText || interim).trim();
-      if(commandBox && recognizedText){
-        commandBox.value = recognizedText;
-      }
-
-      if(interim){
-        const vt = $("voiceText");
-        if(vt) vt.textContent = interim;
-      }
-
-      if(finalText.trim()){
-        lastTranscript = finalText.trim();
-        lastTranscriptAt = Date.now();
-        if(commandBox) commandBox.value = lastTranscript;
-        clearTimeout(silenceTimer);
-        silenceTimer = setTimeout(async () => {
-          if(lastTranscript && !commandInFlight && !speechActive){
-            const text = lastTranscript.trim();
-            lastTranscript = "";
-            commandInFlight = true;
-            const input = $("commandInput");
-            if(input) input.value = text;
-            if(typeof addMessage === "function") addMessage("YOU: " + text, "you");
-            try{
-              if(typeof sendVoiceCommand === "function"){
-                await sendVoiceCommand(text);
-              } else if(typeof sendCommand === "function"){
-                if(input) sendCommand();
-              }
-            }finally{
-              commandInFlight = false;
-              if(input && input.value.trim() === text) input.value = "";
-            }
-          }
-        }, 2200);
-      }
+      if(commandBox && recognizedText) commandBox.value = recognizedText;
+      const vt = $("voiceText");
+      if(vt) vt.textContent = finalText ? "TRANSCRIPT READY — REVIEW & PRESS SEND" : (interim ? "HEARING: " + interim : "LISTENING");
+      if(finalText.trim()) lastTranscript = finalText.trim();
     };
 
-    recognition.onerror = () => {
+    recognition.onerror = (event) => {
       recognitionRunning = false;
-      const vt = $("voiceText"); if(vt) vt.textContent = "STANDBY";
+      const vt = $("voiceText");
+      if(vt) vt.textContent = event && event.error === "not-allowed" ? "MICROPHONE PERMISSION DENIED" : "VOICE INPUT ERROR";
+      const listenButton = document.querySelector(".juno-chat-control.listen");
+      if(listenButton) listenButton.textContent = "🎙 LISTEN";
     };
 
     recognition.onend = () => {
       recognitionRunning = false;
-      if(!speechActive){
-        try{ if(typeof window.setJunoHudState === "function") window.setJunoHudState("READY"); }catch(e){}
-        const vt = $("voiceText"); if(vt) vt.textContent = "STANDBY";
+      const listenButton = document.querySelector(".juno-chat-control.listen");
+      if(listenButton) listenButton.textContent = "🎙 LISTEN";
+      const commandBox = $("commandInput");
+      const vt = $("voiceText");
+      if(lastTranscript && commandBox){
+        commandBox.value = lastTranscript;
+        if(vt) vt.textContent = "TRANSCRIPT READY — EDIT IF NEEDED, THEN PRESS SEND";
+        commandBox.focus();
+      }else if(vt){
+        vt.textContent = "STANDBY";
       }
+      try{ if(typeof window.setJunoHudState === "function") window.setJunoHudState("READY"); }catch(e){}
     };
 
-    try{ recognition.start(); }catch(e){}
+    try{ recognition.start(); }catch(e){
+      recognitionRunning = false;
+      const listenButton = document.querySelector(".juno-chat-control.listen");
+      if(listenButton) listenButton.textContent = "🎙 LISTEN";
+    }
+  };
+
+  let sharedBrowserLocation = null;
+  window.junoShareLocation = function(){
+    if(!navigator.geolocation){
+      if(typeof addMessage === "function") addMessage("JUNO: This browser does not provide location sharing.", "juno");
+      return;
+    }
+    if(typeof addMessage === "function") addMessage("JUNO: Requesting location permission. Your coordinates will only be shared if you approve the browser prompt.", "juno");
+    navigator.geolocation.getCurrentPosition(
+      position => {
+        window.__junoSharedBrowserLocation = {
+          latitude: Number(position.coords.latitude.toFixed(5)),
+          longitude: Number(position.coords.longitude.toFixed(5)),
+          accuracy_meters: Math.round(position.coords.accuracy)
+        };
+        if(typeof addMessage === "function") addMessage("JUNO: Location permission granted. Approximate coordinates are available to JUNO for this page session; this does not identify an exact street address.", "juno");
+      },
+      error => {
+        window.__junoSharedBrowserLocation = null;
+        const reason = error && error.code === 1 ? "Permission was denied." : "The browser could not determine your location.";
+        if(typeof addMessage === "function") addMessage("JUNO: " + reason + " I will use timezone information only and will not guess your precise location.", "juno");
+      },
+      {enableHighAccuracy:false, timeout:10000, maximumAge:60000}
+    );
   };
 
   window.junoSpeakCurrent = function(){
