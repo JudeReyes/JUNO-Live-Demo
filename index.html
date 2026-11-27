@@ -10096,10 +10096,51 @@ async function speakText(text){
     utterance.pitch = 0.95;
     utterance.volume = 1;
 
-    const voices = window.speechSynthesis.getVoices();
-    const preferredVoice = voices.find(voice => /^en[-_]US/i.test(voice.lang))
-        || voices.find(voice => /^en/i.test(voice.lang));
+    // Prefer an available English male voice while keeping browser-native TTS.
+    // Voice names vary by Windows version and installed speech packs.
+    let voices = window.speechSynthesis.getVoices();
+
+    if(!voices.length){
+        voices = await new Promise(resolve => {
+            let settled = false;
+            const finish = () => {
+                if(settled) return;
+                settled = true;
+                window.speechSynthesis.removeEventListener("voiceschanged", onVoicesChanged);
+                resolve(window.speechSynthesis.getVoices());
+            };
+            const onVoicesChanged = () => finish();
+            window.speechSynthesis.addEventListener("voiceschanged", onVoicesChanged);
+            setTimeout(finish, 900);
+        });
+    }
+
+    const englishVoices = voices.filter(voice => /^en([_-]|$)/i.test(voice.lang));
+    const maleVoicePatterns = [
+        /microsoft.*\\b(david|mark|guy|christopher|eric)\\b/i,
+        /\\b(david|mark|guy|james|daniel|alex|george|richard)\\b/i
+    ];
+    const femaleVoicePattern = /\\b(zira|aria|jenny|michelle|samantha|victoria|karen|susan)\\b/i;
+
+    let preferredVoice = englishVoices.find(voice =>
+        maleVoicePatterns.some(pattern => pattern.test(voice.name))
+    );
+
+    if(!preferredVoice){
+        preferredVoice = englishVoices.find(voice =>
+            !femaleVoicePattern.test(voice.name) &&
+            /microsoft|natural|neural/i.test(voice.name)
+        );
+    }
+
+    if(!preferredVoice){
+        preferredVoice = englishVoices.find(voice => /^en[-_]US/i.test(voice.lang))
+            || englishVoices[0]
+            || null;
+    }
+
     if(preferredVoice) utterance.voice = preferredVoice;
+    utterance.pitch = 0.88;
 
     junoSpeechUtterance = utterance;
     if(voiceText) voiceText.textContent = "TRANSMITTING";
