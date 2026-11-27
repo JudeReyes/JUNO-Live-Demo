@@ -10659,8 +10659,6 @@ window.selectJunoMode=function(mode){ window.__junoActiveMode=mode; return _sele
 
   const $ = (id) => document.getElementById(id);
 
-  window.junoRecordActivity("SYSTEM","Activity monitor online");
-
   window.junoRecordActivity = function(kind, detail){
     const feed = $("junoActivityFeed");
     if(!feed) return;
@@ -10674,6 +10672,8 @@ window.selectJunoMode=function(mode){ window.__junoActiveMode=mode; return _sele
     feed.prepend(item);
     while(feed.children.length > 5) feed.lastElementChild.remove();
   };
+
+  window.junoRecordActivity("SYSTEM","Activity monitor online");
 
   function stopSpeechNow(){
     if(typeof window.stopCurrentJunoAudio === "function"){
