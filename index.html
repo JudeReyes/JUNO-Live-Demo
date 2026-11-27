@@ -10190,7 +10190,7 @@ async function junoRequestAI(text){
         {
             role:"system",
             content:"JUNO CLIENT CONTEXT (trusted browser-provided data): " + clientContext +
-                "\nUse this exact local date, time and IANA timezone when answering questions about the viewer's current time. Never guess a time. The timezone is not proof of the viewer's precise location or nationality. Only refer to GPS coordinates if the viewer explicitly granted location permission; coordinates are not an exact street address. If no location permission is present, say that precise location has not been shared. Do not claim that Gemini is the active model."
+                "\nUse this exact local date, time and IANA timezone when answering questions about the viewer's current time. Never guess a time. The timezone is not proof of the viewer's precise location or nationality. Only refer to GPS coordinates if the viewer explicitly granted location permission; coordinates are not an exact street address. If no location permission is present, say that precise location has not been shared. Do not claim that Gemini is the active model.\nVOICE AND STYLE: Do not use emojis, emoticons, emoji shortcodes, or decorative symbols in replies. Use clear, natural conversational language. When the user writes in Filipino or Taglish, answer in natural Filipino/Taglish and use ordinary words, not letter-by-letter spellings."
         },
         ...junoConversationHistory.slice(-10),
         { role:"user", content:modeContext }
@@ -10215,7 +10215,8 @@ async function junoRequestAI(text){
         throw new Error("The AI service returned an empty response.");
     }
 
-    const reply = data.reply.trim();
+    const reply = junoCleanAssistantText(data.reply);
+    if(!reply) throw new Error("The AI response contained no readable text after formatting cleanup.");
     junoConversationHistory = [
         ...junoConversationHistory,
         { role:"user", content:modeContext },
@@ -10262,6 +10263,27 @@ function junoConnectionErrorMessage(){
 
 let junoCommandBusy = false;
 
+function junoCleanAssistantText(value){
+    return String(value || "")
+        .replace(/[\p{Extended_Pictographic}\p{Regional_Indicator}\uFE0E\uFE0F\u200D]/gu, "")
+        .replace(/:[a-z0-9_+-]{2,}:/gi, "")
+        .replace(/[ \t]{2,}/g, " ")
+        .replace(/\n[ \t]+/g, "\n")
+        .trim();
+}
+
+function junoPrepareSpeechText(value){
+    return junoCleanAssistantText(value)
+        .replace(/^\s{0,3}#{1,6}\s*/gm, "")
+        .replace(/^\s*[-*•]\s+/gm, "")
+        .replace(/[ *_~]/g, "")
+        .replace(new RegExp(String.fromCharCode(96), "g"), "")
+        .replace(/\bJUNO\b/g, "Juno")
+        .replace(/\b[A-Z]{3,}\b/g, word => word.toLowerCase())
+        .replace(/\s+/g, " ")
+        .trim();
+}
+
 async function sendCommand(){
     if(junoCommandBusy) return;
 
@@ -10293,6 +10315,10 @@ async function sendCommand(){
 async function sendVoiceCommand(text){
     const cleaned = String(text || "").trim();
     if(!cleaned || junoCommandBusy) return;
+
+    addMessage("YOU: " + cleaned, "you");
+    const commandBox = document.getElementById("commandInput");
+    if(commandBox && commandBox.value.trim() === cleaned) commandBox.value = "";
 
     if(junoHandleQuickCommand(cleaned)) return;
 
@@ -10409,7 +10435,7 @@ function stopCurrentJunoAudio(){
 }
 
 async function speakText(text){
-    const cleaned = String(text || "").trim();
+    const cleaned = junoPrepareSpeechText(text);
     if(!cleaned) return;
 
     if(!("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)){
@@ -10427,10 +10453,11 @@ async function speakText(text){
     const humanoid = document.querySelector(".humanoid");
 
     const utterance = new SpeechSynthesisUtterance(cleaned);
-    const hasFilipinoText = /\b(kaya|mo|ba|bakit|hindi|di|tagalog|filipino|kumanta|kanta|wala|akong|pakialam|ayusin|trabaho|sino|ano|paano|pwede|puwede|salamat|kilala|ako|oras|ngayon|saan|bakit|pakiusap)\b/i.test(cleaned);
+    const filipinoWords = /\b(ako|ikaw|siya|kami|tayo|kayo|sila|ko|mo|niya|namin|natin|ninyo|nila|ang|ng|mga|sa|para|kay|kina|ito|iyan|iyon|dito|diyan|doon|ano|sino|saan|kailan|bakit|paano|alin|ilan|ba|naman|kasi|dahil|pero|ngunit|hindi|di|wala|meron|mayroon|talaga|siguro|sige|opo|oo|huwag|wag|paki|pakiusap|salamat|kumusta|mahal|gusto|ayaw|pwede|puwede|kailangan|trabaho|bahay|oras|ngayon|kanina|mamaya|bukas|kahapon|maganda|mabuti|tama|mali|tulong|gawin|tingnan|sabihin|ulit|lang|nating|kong|mong|yung|yan|yun)\b/i;
+    const hasFilipinoText = filipinoWords.test(cleaned) || /\b(ano na|anong oras|kamusta ka|maraming salamat|mahal kita|hindi ko|pwede ba|pakiusap lang)\b/i.test(cleaned);
     utterance.lang = hasFilipinoText ? "fil-PH" : "en-US";
-    utterance.rate = 1;
-    utterance.pitch = 0.95;
+    utterance.rate = hasFilipinoText ? 0.92 : 1;
+    utterance.pitch = hasFilipinoText ? 1 : 0.95;
     utterance.volume = 1;
 
     // Prefer an available English male voice while keeping browser-native TTS.
@@ -10479,8 +10506,13 @@ async function speakText(text){
             || null;
     }
 
-    if(preferredVoice) utterance.voice = preferredVoice;
-    utterance.pitch = 0.88;
+    if(preferredVoice){
+        utterance.voice = preferredVoice;
+        if(hasFilipinoText) utterance.lang = preferredVoice.lang || "fil-PH";
+    }
+    // Never force an English voice onto Filipino text. If no Filipino/Tagalog
+    // voice is installed, let the browser resolve the Filipino language tag.
+    if(hasFilipinoText && !preferredVoice) utterance.lang = "fil-PH";
 
     junoSpeechUtterance = utterance;
     if(voiceText) voiceText.textContent = "TRANSMITTING";
@@ -10952,7 +10984,7 @@ window.selectJunoMode=function(mode){ window.__junoActiveMode=mode; return _sele
       return;
     }
     recognition = new Recognition();
-    recognition.lang = "en-US";
+    recognition.lang = /^(fil|tl)/i.test(navigator.language || "") ? "fil-PH" : "en-US";
     recognition.continuous = false;
     recognition.interimResults = true;
     lastTranscript = "";
@@ -10978,7 +11010,7 @@ window.selectJunoMode=function(mode){ window.__junoActiveMode=mode; return _sele
       const recognizedText = (finalText || interim).trim();
       if(commandBox && recognizedText) commandBox.value = recognizedText;
       const vt = $("voiceText");
-      if(vt) vt.textContent = finalText ? "TRANSCRIPT READY — REVIEW & PRESS SEND" : (interim ? "HEARING: " + interim : "LISTENING");
+      if(vt) vt.textContent = finalText ? "TRANSCRIPT READY — AUTO-SENDING…" : (interim ? "HEARING: " + interim : "LISTENING");
       if(finalText.trim()) lastTranscript = finalText.trim();
     };
 
@@ -10997,9 +11029,15 @@ window.selectJunoMode=function(mode){ window.__junoActiveMode=mode; return _sele
       const commandBox = $("commandInput");
       const vt = $("voiceText");
       if(lastTranscript && commandBox){
-        commandBox.value = lastTranscript;
-        if(vt) vt.textContent = "TRANSCRIPT READY — EDIT IF NEEDED, THEN PRESS SEND";
-        commandBox.focus();
+        const spokenCommand = lastTranscript.trim();
+        commandBox.value = spokenCommand;
+        lastTranscript = "";
+        if(vt) vt.textContent = "SENDING VOICE COMMAND…";
+        setTimeout(() => {
+          if(!spokenCommand || junoCommandBusy) return;
+          if(commandBox.value.trim() === spokenCommand) commandBox.value = "";
+          if(typeof sendVoiceCommand === "function") sendVoiceCommand(spokenCommand);
+        }, 650);
       }else if(vt){
         vt.textContent = "STANDBY";
       }
