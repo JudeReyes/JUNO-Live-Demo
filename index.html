@@ -8849,6 +8849,102 @@ html,body{
 }
 </style>
 
+
+<style id="juno-professional-control-system">
+/* JUNO PROFESSIONAL CONTROL SYSTEM */
+button,
+.action{
+  position:relative;
+  border:1px solid rgba(0,226,255,.34);
+  border-radius:8px;
+  background:linear-gradient(180deg,rgba(10,38,54,.94),rgba(3,16,27,.96));
+  color:#dffaff;
+  font-family:inherit;
+  font-weight:700;
+  letter-spacing:1.15px;
+  text-transform:uppercase;
+  cursor:pointer;
+  transition:transform .18s ease,border-color .18s ease,background .18s ease,box-shadow .18s ease,color .18s ease;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.055),0 5px 16px rgba(0,0,0,.22);
+}
+button:hover,
+.action:hover{
+  border-color:rgba(0,234,255,.82);
+  background:linear-gradient(180deg,rgba(9,61,79,.98),rgba(3,24,39,.98));
+  color:#fff;
+  box-shadow:0 0 0 1px rgba(0,234,255,.10),0 0 18px rgba(0,234,255,.13),inset 0 1px 0 rgba(255,255,255,.08);
+  transform:translateY(-1px);
+}
+button:active,
+.action:active{transform:translateY(0);box-shadow:inset 0 2px 8px rgba(0,0,0,.28);}
+button:focus-visible,
+.action:focus-visible{
+  outline:2px solid #70f5ff;
+  outline-offset:3px;
+  box-shadow:0 0 0 5px rgba(0,234,255,.12);
+}
+button:disabled,
+.action[aria-disabled="true"]{opacity:.48;cursor:not-allowed;transform:none;box-shadow:none;}
+.action.primary,
+.console-input button{
+  border-color:rgba(0,234,255,.9);
+  background:linear-gradient(135deg,#00dff3,#168cff);
+  color:#00131b;
+  font-weight:900;
+  box-shadow:0 0 18px rgba(0,210,255,.2),inset 0 1px 0 rgba(255,255,255,.42);
+}
+.action.primary:hover,
+.console-input button:hover{
+  background:linear-gradient(135deg,#72f8ff,#45aaff);
+  color:#00131b;
+  box-shadow:0 0 24px rgba(0,234,255,.34);
+}
+.juno-mode-btn{
+  border-radius:9px;
+  min-height:52px;
+  padding:10px 12px;
+  background:linear-gradient(180deg,rgba(7,28,42,.92),rgba(2,12,22,.96));
+  border-color:rgba(0,234,255,.2);
+  text-align:left;
+}
+.juno-mode-btn.active{
+  border-color:rgba(0,234,255,.9);
+  background:linear-gradient(135deg,rgba(0,234,255,.19),rgba(18,105,160,.18) 55%,rgba(3,17,30,.96));
+  color:#aaf8ff;
+  box-shadow:inset 3px 0 0 #00eaff,0 0 20px rgba(0,234,255,.13);
+}
+.juno-mode-btn small{
+  display:block;
+  margin-top:5px;
+  color:rgba(190,229,239,.62);
+  font-size:8px;
+  letter-spacing:1.35px;
+}
+.juno-mode-btn.active small{color:#8ceeff;}
+.juno-chip{
+  border-radius:999px;
+  padding:8px 12px;
+  background:rgba(0,234,255,.055);
+  border-color:rgba(0,234,255,.24);
+  color:#c9f8ff;
+}
+.juno-chip:hover{background:rgba(0,234,255,.13);}
+.juno-approval-buttons button[onclick*="approve"]{
+  border-color:rgba(0,255,157,.52);
+  color:#a8ffe0;
+}
+.juno-approval-buttons button[onclick*="dismiss"],
+.action.stop-speech{
+  border-color:rgba(255,105,125,.42);
+  color:#ffd0d8;
+}
+.console-input button{min-width:92px;border-radius:7px;}
+@media (prefers-reduced-motion:reduce){
+  button,.action{transition:none;}
+  button:hover,.action:hover{transform:none;}
+}
+</style>
+
 </head>
 
 
@@ -8977,7 +9073,7 @@ html,body{
     <button
         class="action"
         style="width:100%;"
-        onclick="messages.innerHTML=''">
+        onclick="junoClearConversation()">
 
         CLEAR CONSOLE
 
@@ -9971,7 +10067,7 @@ function junoAdditionalIntentReply(command){
 
 function junoHandleQuickCommand(command){
     const raw = String(command || "").trim();
-    const lower = raw.toLowerCase().replace(/^(hey\s+)?(juno|google)[,\s]+/i, "").trim();
+    const lower = raw.toLowerCase().replace(/^(hey\\s+)?(juno|google)[,\\s]+/i, "").trim();
 
     const sites = {
         youtube: "https://www.youtube.com/",
@@ -9981,287 +10077,169 @@ function junoHandleQuickCommand(command){
         linkedin: "https://www.linkedin.com/"
     };
 
-    const openMatch = lower.match(/\b(?:open|go to|launch|visit)\s+(youtube|google|gmail|facebook|linkedin)\b/i);
+    const openMatch = lower.match(/\\b(?:open|go to|launch|visit)\\s+(youtube|google|gmail|facebook|linkedin)\\b/i);
     if(openMatch){
         const site = openMatch[1].toLowerCase();
-        const url = sites[site];
-
+        const openedWindow = window.open(sites[site], "_blank", "noopener,noreferrer");
         addMessage("JUNO: Opening " + site.toUpperCase() + ".", "juno");
         speakText("Opening " + site + ".");
-
-        // Try a new tab first. If the browser blocks the popup (common
-        // for voice-triggered commands), navigate this tab automatically.
-        const openedWindow = window.open(url, "_blank");
-        if(openedWindow){
-            try { openedWindow.opener = null; } catch(error) {}
-        }else{
-            window.location.assign(url);
+        if(!openedWindow){
+            addMessage("JUNO: Your browser blocked the new tab. Please allow pop-ups for this site.", "juno");
         }
         return true;
     }
 
-    // Identity and company-name recognition: keep named entities distinct from broad industries.
-    if(/\b(who (?:built|created|made|developed) you|who is your (?:creator|developer)|sino ang gumawa sa iyo|sino gumawa sa iyo)\b/i.test(lower)){
-        const reply = "I'm JUNO — Jude's Neural Operations Assistant. I was designed and built by Jude Reyes as a portfolio project to demonstrate virtual-assistant workflows, voice interaction and productivity concepts.";
+    if(/\\b(who (?:built|created|made|developed) you|who is your (?:creator|developer)|sino ang gumawa sa iyo|sino gumawa sa iyo)\\b/i.test(lower)){
+        const reply = "I'm JUNO — Jude's Neural Operations Assistant. I was designed and built by Jude Reyes as a portfolio project exploring conversational AI, voice interaction, workflow support and human-computer interaction.";
         addMessage("JUNO: " + reply, "juno");
         speakText(reply);
         return true;
     }
 
-    if(/\benikon(?:\s+aerospace)?\b/i.test(lower)){
-        let focus = "the company itself";
-        if(/\b(hir(?:e|ing)|vacanc(?:y|ies)|job|jobs|production|operator|work|career|recruit)\b/i.test(lower)){
-            focus = "its recruitment and production-job opportunity";
-        }else if(/\b(germany|croatia|assignment|posting|contract|salary|pay|hour|accommodation|visa|permit)\b/i.test(lower)){
-            focus = "the Croatia-to-Germany employment arrangement";
-        }else if(/\b(legit|legitimate|scam|fraud|verify|verification|safe|trust)\b/i.test(lower)){
-            focus = "whether the company, recruiter and job offer can be independently verified";
-        }
-        const reply = "ENIKON AEROSPACE — COMPANY-SPECIFIC REQUEST\n\nI recognize “Enikon Aerospace” as the specific company name you mentioned, not as a request for general information about the aerospace industry. Your question appears to concern " + focus + ".\n\nThis JUNO demo does not have live web research connected, so I cannot confirm current hiring, company registration, recruiter authorization or the legitimacy of an offer. To verify it, check the company's official contact channels, confirm the recruiter's authorization directly with the company, review the written employment contract and assignment terms, and independently confirm the applicable work-permit and immigration process. Do not pay recruitment or processing fees without checking the rules with the relevant Philippine authorities.\n\nIf you share the exact Enikon question or offer text, I can help organize the points that need verification.";
-        addMessage("JUNO: " + reply, "juno");
-        speakText(reply);
-        return true;
-    }
-
-    // Basic Filipino/Tagalog quick replies for the portfolio demo.
-    if(/\b(kilala mo ba ako|kilala mo ba ko|do you know me)\b/i.test(lower)){
-        const reply = "Sa ngayon, ang alam ko lang ay ang impormasyong ibinabahagi mo sa usapang ito. Portfolio demo ito, kaya wala akong konektadong personal database o permanenteng memory ng mga user. Maaari kitang tulungan batay sa impormasyong ibibigay mo.";
-        addMessage("JUNO: " + reply, "juno");
-        speakText(reply);
-        return true;
-    }
-
-    if(/\b(pwede|puwede|maaari)\b.*\b(tagalog|filipino)\b|\b(mag(tagalog|filipino)|tagalog tayo|filipino tayo)\b/i.test(lower)){
-        const reply = "Oo naman! Maaari akong sumagot sa Tagalog o Taglish. Paalala: limitado pa ang mga naka-program na Tagalog command sa portfolio demo na ito; hindi pa ito full AI conversation.";
-        addMessage("JUNO: " + reply, "juno");
-        speakText(reply);
-        return true;
-    }
-
-    const searchIntent = /\b(search|find|look for|look up|what about|tell me about|show me|give me|list|name)\b/i.test(lower);
-    const companyIntent = /\b(compan(?:y|ies)|employer|business(?:es)?|aerospace|aircraft|aviation|manufacturer|manufacturing|factory|supplier)\b/i.test(lower);
-    const jobIntent = /\b(job listings|job openings|vacanc(?:y|ies)|available jobs|hiring|production jobs|operator jobs)\b/i.test(lower);
-    const companyQuestion = /\b(any|some|a|the)\s+(?:good\s+)?(?:company|companies|employer|business|aerospace|aircraft|aviation|manufacturer|factory|supplier)\b/i.test(lower);
-
-    if((searchIntent && (companyIntent || jobIntent)) || (companyIntent && companyQuestion)){
-        let reply;
-        if(companyIntent){
-            const industry = /aerospace|aircraft|aviation/i.test(lower) ? "aerospace and aviation" :
-                /manufactur|factory|production/i.test(lower) ? "manufacturing and production" : "the industry you mentioned";
-            const location = /\bgermany|german\b/i.test(lower) ? "Germany" :
-                /\bcroatia|croatian\b/i.test(lower) ? "Croatia" :
-                /\buk|united kingdom|britain\b/i.test(lower) ? "the United Kingdom" :
-                /\bpoland|polish\b/i.test(lower) ? "Poland" : "your requested location";
-            reply = "COMPANY RESEARCH REQUEST RECEIVED\n\nI understood that you want to know about " + industry + " companies in " + location + ". Live web search is not connected in this JUNO portfolio demo, so I cannot verify company names, current hiring status or vacancies. I can still help you prepare a company-research checklist and identify what to verify, including official website, location, careers page and recruitment legitimacy.";
-        }else{
-            reply = "JOB SEARCH REQUEST RECEIVED\n\nLive job listings are not connected in this portfolio demo, so I cannot verify current vacancies. Specify the job title, industry and target location, and I can prepare targeted search terms and an application checklist.";
-        }
-        addMessage("JUNO: " + reply, "juno");
-        speakText(reply);
-        return true;
-    }
-
-    const additionalReply = junoAdditionalIntentReply(raw);
-    if(additionalReply){
-        addMessage("JUNO: " + additionalReply, "juno");
-        speakText(additionalReply);
-        return true;
-    }
-
+    // All other natural-language requests go to the connected AI engine.
     return false;
 }
 
 
 /* =========================================================
-   GITHUB PAGES DEMO COMMAND FALLBACK
-   Real AI responses require a separately hosted backend.
+   JUNO LIVE AI CONNECTION
+   Cloudflare Workers AI — conversation-aware frontend client
 ========================================================= */
 
-function junoOfflineDemoReply(command){
-    const text = String(command || "").trim();
-    const lower = text.toLowerCase();
-    const mode = String(window.__junoActiveMode || "GENERAL").toUpperCase();
-    const line = (value) => String(value || "").replace(/[<>]/g, "").trim();
+const JUNO_AI_ENDPOINT = "https://juno-ai-engine.jude-reyes0618.workers.dev/";
+const JUNO_HISTORY_KEY = "juno.ai.conversation.v1";
+let junoConversationHistory = [];
 
-    const additionalReply = junoAdditionalIntentReply(text);
-    if(additionalReply) return additionalReply;
+try{
+    const savedHistory = sessionStorage.getItem(JUNO_HISTORY_KEY);
+    if(savedHistory){
+        const parsedHistory = JSON.parse(savedHistory);
+        if(Array.isArray(parsedHistory)){
+            junoConversationHistory = parsedHistory
+                .filter(item =>
+                    item &&
+                    ["user","assistant"].includes(item.role) &&
+                    typeof item.content === "string"
+                )
+                .slice(-12);
+        }
+    }
+}catch(error){
+    console.warn("JUNO session history could not be restored.", error);
+}
 
-    if (/^(hi|hello|hey)( juno)?[.! ]*$/i.test(text)) {
-        return "Hello! I'm JUNO, Jude's Neural Operations Assistant, designed and built by Jude Reyes. Choose a work mode or give me a task. I can demonstrate practical VA workflows, job-application preparation, interview coaching, automation planning, and client task organization.";
+window.junoClearConversation = function(){
+    junoConversationHistory = [];
+    try{ sessionStorage.removeItem(JUNO_HISTORY_KEY); }catch(error){}
+    if(messages) messages.innerHTML = "";
+    addMessage("JUNO: Conversation cleared. I'm ready for a new task.", "juno");
+};
+
+async function junoRequestAI(text){
+    const activeMode = String(window.__junoActiveMode || "GENERAL").toUpperCase();
+    const modeContext = activeMode === "GENERAL"
+        ? text
+        : "[Active JUNO workspace: " + activeMode + ". Use this as helpful context, but do not restrict the conversation to this mode.]\\n\\nUser request: " + text;
+
+    const outgoingMessages = [
+        ...junoConversationHistory,
+        { role:"user", content:modeContext }
+    ].slice(-12);
+
+    const response = await fetch(JUNO_AI_ENDPOINT, {
+        method:"POST",
+        headers:{ "Content-Type":"application/json" },
+        body:JSON.stringify({
+            messages:outgoingMessages,
+            mode:activeMode
+        })
+    });
+
+    const data = await response.json().catch(() => ({}));
+
+    if(!response.ok){
+        throw new Error(data.error || data.details || ("AI service returned HTTP " + response.status));
     }
 
-    if (/\b(who (?:built|created|made|developed) you|who is your (?:creator|developer)|sino ang gumawa sa iyo|sino gumawa sa iyo)\b/i.test(lower)) {
-        return "I'm JUNO — Jude's Neural Operations Assistant. I was designed and built by Jude Reyes as a portfolio project to demonstrate virtual-assistant workflows, voice interaction and productivity concepts.";
+    if(!data || typeof data.reply !== "string" || !data.reply.trim()){
+        throw new Error("The AI service returned an empty response.");
     }
 
-    if (/\benikon(?:\s+aerospace)?\b/i.test(lower)) {
-        let focus = "the company itself";
-        if (/\b(hir(?:e|ing)|vacanc(?:y|ies)|job|jobs|production|operator|work|career|recruit)\b/i.test(lower)) {
-            focus = "its recruitment and production-job opportunity";
-        } else if (/\b(germany|croatia|assignment|posting|contract|salary|pay|hour|accommodation|visa|permit)\b/i.test(lower)) {
-            focus = "the Croatia-to-Germany employment arrangement";
-        } else if (/\b(legit|legitimate|scam|fraud|verify|verification|safe|trust)\b/i.test(lower)) {
-            focus = "whether the company, recruiter and job offer can be independently verified";
-        }
-        return "ENIKON AEROSPACE — COMPANY-SPECIFIC REQUEST\n\nI recognize “Enikon Aerospace” as the specific company name you mentioned, not as a request for general information about the aerospace industry. Your question appears to concern " + focus + ".\n\nThis JUNO demo does not have live web research connected, so I cannot confirm current hiring, company registration, recruiter authorization or the legitimacy of an offer. To verify it, check the company's official contact channels, confirm the recruiter's authorization directly with the company, review the written employment contract and assignment terms, and independently confirm the applicable work-permit and immigration process. Do not pay recruitment or processing fees without checking the rules with the relevant Philippine authorities.\n\nIf you share the exact Enikon question or offer text, I can help organize the points that need verification.";
+    const reply = data.reply.trim();
+    junoConversationHistory = [
+        ...junoConversationHistory,
+        { role:"user", content:modeContext },
+        { role:"assistant", content:reply }
+    ].slice(-12);
+
+    try{
+        sessionStorage.setItem(JUNO_HISTORY_KEY, JSON.stringify(junoConversationHistory));
+    }catch(error){
+        console.warn("JUNO could not save this tab's conversation history.", error);
     }
 
-    if (/\b(time|date)\b/.test(lower) && /\b(what|current|today|now|time|date)\b/.test(lower)) {
-        return "Your device's local date and time is " + new Date().toLocaleString() + ". This value comes from the browser clock.";
-    }
+    return reply;
+}
 
-    if (/\b(help|what can you do|capabilities)\b/.test(lower)) {
-        return "I can demonstrate six portfolio modes: GENERAL — everyday questions, writing help and brainstorming with offline-demo limits; WORK — summarize instructions, create checklists and SOPs; JOBS — review job requirements and prepare honest application materials; INTERVIEW — practice and improve answers; AUTOMATION — map Make.com and Zapier workflows; CLIENT — organize, prioritize and report client tasks. Select a mode, then try one of its action buttons.";
-    }
+window.junoRequestAI = junoRequestAI;
 
-    if (/\b(clear|erase)\s+(the\s+)?(console|chat|messages)\b/.test(lower)) {
-        return "Use the CLEAR CONSOLE control to clear the conversation display. Your browser-based demo does not store this chat as a permanent client record.";
-    }
-
-    if (mode === "GENERAL") {
-        if (/\b(explain|how does|what is|what are)\b/.test(lower) && /\b(artificial intelligence|\bai\b|machine learning)\b/.test(lower)) {
-            return "SAMPLE EXPLANATION — ARTIFICIAL INTELLIGENCE\n\nArtificial intelligence is software designed to perform tasks that normally require human-like abilities, such as understanding language, recognizing patterns and generating suggestions. It learns patterns from data during training, then uses those patterns to produce an output when given a prompt. AI can be useful, but its answers still need human review because it can make mistakes.\n\nDEMO NOTE: This is a built-in example, not a live AI-generated answer.";
-        }
-        if (/\b(write|rewrite|improve|polish|draft)\b/.test(lower)) {
-            return "I can help with writing in GENERAL mode. Paste the text you want me to write or improve, and include the tone or audience if you have one. In this offline portfolio demo, I can show prepared examples; full open-ended writing requires a connected AI service.";
-        }
-        if (/\b(brainstorm|ideas|idea)\b/.test(lower)) {
-            return "Let's brainstorm. Tell me the topic, audience and goal. I can organize ideas into practical options and next steps. In this offline demo, broad idea generation is limited to built-in examples until an AI service is connected.";
-        }
-        if (/\b(translate|translation)\b/.test(lower)) {
-            return "I can help prepare a translation request. Tell me the text and target language. Full, reliable open-ended translation requires a connected language or AI service; this demo does not claim to translate arbitrary text offline.";
-        }
-        return "GENERAL MODE is active. I can demonstrate built-in examples, explain selected topics, help structure writing requests and guide brainstorming. I'm currently in offline demo mode, so I cannot reliably answer every open-ended question without a connected AI service. Your question has not been sent to an external AI.";
-    }
-
-    if (mode === "WORK") {
-        if (/\b(sop|standard operating procedure|procedure)\b/.test(lower)) {
-            return "SAMPLE SOP — TASK EXECUTION\n\n1. PURPOSE: Complete the requested task consistently and accurately.\n2. REVIEW: Read the client's instructions, deadline, required format and success criteria.\n3. PREPARE: Gather the approved files, links and access needed.\n4. EXECUTE: Complete the task in small, verifiable steps.\n5. QUALITY CHECK: Verify accuracy, formatting, links and completeness.\n6. REPORT: Send a concise completion update and flag anything still pending.\n\nDEMO NOTE: Replace this sample with the client's actual process before using it operationally.";
-        }
-        if (/\b(checklist|to-do|todo|task list)\b/.test(lower)) {
-            return "SAMPLE TASK CHECKLIST\n\n☐ Confirm the objective and expected deliverable.\n☐ Review instructions, reference files and deadline.\n☐ Break the work into clear action steps.\n☐ Complete the highest-priority task first.\n☐ Check accuracy, formatting and completeness.\n☐ Save the deliverable in the agreed location.\n☐ Send the client a status or completion update.\n\nShare the actual instructions to tailor this checklist.";
-        }
-        if (/\b(summarize|summary|summarise)\b/.test(lower)) {
-            return "WORK SUMMARY FRAMEWORK\n\n• OBJECTIVE: Identify the result the client needs.\n• KEY REQUIREMENTS: Extract deliverables, format, deadline and constraints.\n• ACTIONS: Convert each requirement into a task.\n• PRIORITY: Handle urgent and dependency-sensitive items first.\n• OPEN QUESTIONS: Confirm missing details before proceeding.\n\nPaste the client instructions after this request for a more specific demonstration.";
-        }
-        if (/\b(email|reply|respond|message|draft)\b/.test(lower)) {
-            return "SAMPLE PROFESSIONAL CLIENT EMAIL\n\nSubject: Update on Your Request\n\nHi [Client Name],\n\nThank you for sharing the details. I've reviewed the request and will organize the work according to the agreed priorities and deadline. I'll let you know if I need any clarification and will provide an update once the task is complete.\n\nBest regards,\n[Your Name]\n\nReplace the placeholders and confirm the details before sending.";
-        }
-        return "WORK ASSISTANT — READY\n\nI can help structure this into an actionable workflow. A good starting point is to identify: (1) the desired outcome, (2) required steps, (3) deadline and priority, (4) files or access needed, and (5) how completion will be verified.\n\nTry: “Create a checklist”, “Write an SOP”, “Summarize client instructions”, or “Draft a client email”.";
-    }
-
-    if (mode === "JOBS") {
-        if (/\b(cover letter|application letter)\b/.test(lower)) {
-            return "APPLICATION DRAFTING\n\nI can prepare a tailored cover letter using your actual experience. Please provide the job title, company, job description and the experience you want highlighted.\n\nJUNO PRINCIPLE: Never invent qualifications, employment history, certifications or results. The final draft should be checked before submission.";
-        }
-        if (/\b(resume|cv|bullet|experience)\b/.test(lower)) {
-            return "RESUME SUPPORT\n\nA strong experience entry should include: ACTION VERB + TASK / EQUIPMENT + QUALITY OR PROCESS CONTEXT + VERIFIED RESULT (if available).\n\nExample structure: “Operated production equipment while following work instructions, safety requirements and quality inspection procedures.”\n\nShare the actual role and duties to create accurate, targeted bullet points.";
-        }
-        return "JOB APPLICATION REVIEW — SAMPLE\n\n1. ROLE REQUIREMENTS: Identify essential duties, skills and experience.\n2. MATCHES: Compare each requirement with evidence from your actual background.\n3. GAPS: Identify requirements that need training or clarification.\n4. APPLICATION PLAN: Tailor the resume and cover letter honestly.\n5. QUESTIONS: Prepare points to confirm with the recruiter.\n\nPaste a job description and your relevant experience for a focused review. This demo does not access live job listings.";
-    }
-
-    if (mode === "INTERVIEW") {
-        if (/\b(start|begin|mock|practice|question)\b/.test(lower)) {
-            return "MOCK INTERVIEW — QUESTION 1\n\n“Tell me about yourself and explain how your previous experience prepares you for this role.”\n\nAnswer in 60–90 seconds. Use this structure: present professional summary → relevant experience → strengths supported by examples → why the role interests you.\n\nType your answer and choose ANSWER REVIEW for a sample coaching review.";
-        }
-        if (/\b(review|feedback|improve|evaluate|answer)\b/.test(lower)) {
-            return "INTERVIEW ANSWER REVIEW FRAMEWORK\n\n• CLARITY: Did you answer the question directly?\n• STRUCTURE: Is the answer easy to follow?\n• EVIDENCE: Did you give a real example?\n• RELEVANCE: Does the example match the role?\n• DELIVERY: Is the tone confident and concise?\n\nPaste your actual answer for a more useful review. This sample does not score or record your voice.";
-        }
-        return "INTERVIEW COACH — READY\n\nI can demonstrate common Technical VA interview practice. Try “Start mock interview” or paste an answer and ask for feedback. Focus on specific examples, clear steps and truthful descriptions of your skills.";
-    }
-
-    if (mode === "AUTOMATION") {
-        return "AUTOMATION WORKFLOW — SAMPLE PLAN\n\nGOAL: Capture a new client inquiry and organize follow-up.\n\nTRIGGER: A new response arrives in an approved form.\nACTION 1: Validate required fields (name, email, request).\nACTION 2: Add the inquiry to an approved tracking sheet or CRM.\nACTION 3: Send an acknowledgment email using an approved template.\nACTION 4: Notify the responsible team member.\nERROR HANDLING: Check missing fields, prevent duplicate records and log failed steps for review.\n\nBEFORE ACTIVATION: Confirm app permissions, field mapping, privacy requirements and client approval. No automation is actually executed by this portfolio demo.";
-    }
-
-    if (mode === "CLIENT") {
-        if (/\b(update|status|completion|complete|finished)\b/.test(lower)) {
-            return "SAMPLE CLIENT COMPLETION UPDATE\n\nHi [Client Name],\n\nThe requested task has been completed. I checked the deliverable for accuracy and completeness and saved it in [agreed location].\n\nPlease let me know if you would like any adjustments.\n\nBest regards,\n[Your Name]\n\nOnly use this message after verifying that the work is actually complete.";
-        }
-        if (/\b(priorit|urgent|organize|organise|plan)\b/.test(lower)) {
-            return "CLIENT TASK PRIORITY PLAN\n\n1. URGENT: Tasks with immediate deadlines or that block other work.\n2. HIGH: Important deliverables due soon.\n3. NORMAL: Routine work with a flexible deadline.\n4. WAITING: Items dependent on client feedback or access.\n\nFor each task, record the owner, due date, next action and status. Share the client message to turn it into a specific task plan.";
-        }
-        return "CLIENT TASK INTAKE — SAMPLE\n\n• REQUEST: What does the client need?\n• DELIVERABLE: What should be handed over?\n• DEADLINE: When is it due, including time zone?\n• PRIORITY: What is urgent or blocking?\n• DEPENDENCIES: Are files, approvals or access missing?\n• NEXT STEP: Confirm the first action and report progress.\n\nPaste a client instruction to demonstrate task breakdown.";
-    }
-
-    return "JUNO received your request in " + mode + " mode. For this portfolio demonstration, I can provide structured sample workflows and templates. Try a suggested action in the active mode or add the specific task details to your message. Live AI reasoning, external integrations and file analysis are not connected in this demo.";
+function junoConnectionErrorMessage(){
+    return "I couldn't reach the JUNO AI engine just now. Please check your connection and try again. Your message has not been lost from the console.";
 }
 
 /* =========================================================
-   COMMAND API
+   COMMAND API — TEXT + VOICE USE THE SAME AI SESSION
 ========================================================= */
 
-let junoCommandBusy=false;
+let junoCommandBusy = false;
 
 async function sendCommand(){
     if(junoCommandBusy) return;
+
     const text = input.value.trim();
     if(!text) return;
 
     addMessage("YOU: " + text, "you");
     input.value = "";
+
     if(junoHandleQuickCommand(text)) return;
+
     junoCommandBusy = true;
+    if(typeof window.setJunoHudState === "function") window.setJunoHudState("THINKING");
 
     try{
-        const response = await fetch("/api/command", {
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({
-                command:text,
-                mode:window.__junoActiveMode || "GENERAL"
-            })
-        });
-
-        if(!response.ok) throw new Error("Command HTTP " + response.status);
-        const data = await response.json();
-        if(!data || typeof data.response !== "string" || !data.response.trim()){
-            throw new Error("Invalid command response");
-        }
-
-        addMessage("JUNO: " + data.response, "juno");
-        await speakText(data.response);
-    }catch(error){
-        console.log("COMMAND API UNAVAILABLE — USING DEMO MODE:", error);
-        const reply = junoOfflineDemoReply(text);
+        const reply = await junoRequestAI(text);
         addMessage("JUNO: " + reply, "juno");
         await speakText(reply);
+    }catch(error){
+        console.error("JUNO AI REQUEST ERROR:", error);
+        const message = junoConnectionErrorMessage();
+        addMessage("JUNO: " + message, "juno");
     }finally{
         junoCommandBusy = false;
+        if(typeof window.setJunoHudState === "function") window.setJunoHudState("READY");
     }
 }
 
-/* =========================================================
-   VOICE COMMAND API
-========================================================= */
-
 async function sendVoiceCommand(text){
     const cleaned = String(text || "").trim();
-    if(!cleaned) return;
+    if(!cleaned || junoCommandBusy) return;
 
     if(junoHandleQuickCommand(cleaned)) return;
 
+    junoCommandBusy = true;
+    if(typeof window.setJunoHudState === "function") window.setJunoHudState("THINKING");
+
     try{
-        const response = await fetch("/api/command", {
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({
-                command:cleaned,
-                mode:window.__junoActiveMode || "GENERAL"
-            })
-        });
-        if(!response.ok) throw new Error("Voice command HTTP " + response.status);
-        const data = await response.json();
-        if(!data || typeof data.response !== "string" || !data.response.trim()){
-            throw new Error("Invalid voice command response");
-        }
-        addMessage("JUNO: " + data.response, "juno");
-        await speakText(data.response);
-    }catch(error){
-        console.log("VOICE COMMAND API UNAVAILABLE — USING DEMO MODE:", error);
-        const reply = junoOfflineDemoReply(cleaned);
+        const reply = await junoRequestAI(cleaned);
         addMessage("JUNO: " + reply, "juno");
         await speakText(reply);
+    }catch(error){
+        console.error("JUNO VOICE AI REQUEST ERROR:", error);
+        addMessage("JUNO: " + junoConnectionErrorMessage(), "juno");
+    }finally{
+        junoCommandBusy = false;
+        if(typeof window.setJunoHudState === "function") window.setJunoHudState("READY");
     }
 }
 
@@ -10307,7 +10285,7 @@ function runJunoSystemCheck(){
         "Microphone recognition: " + (recognitionSupported ? "AVAILABLE" : "NOT SUPPORTED"),
         "Secure browser context: " + (secure ? "YES" : "NO"),
         "Browser voices currently loaded: " + voiceCount,
-        "Live AI backend: NOT CONNECTED — portfolio demo mode"
+        "Live AI backend: CLOUDFLARE WORKERS AI — CONFIGURED"
     ];
 
     const report = lines.join("\n");
@@ -10316,7 +10294,7 @@ function runJunoSystemCheck(){
         (speechSupported ? "available" : "not supported") +
         ". Microphone recognition " +
         (recognitionSupported ? "available" : "not supported") +
-        ". Live AI backend is not connected in this portfolio demo.");
+        ". Cloudflare Workers AI backend is configured.");
 
 }
 
@@ -10708,7 +10686,7 @@ function startRecognitionSession(){if(!junoContinuousMode||junoResponseBusy||jun
 ========================================================= */
 (function(){
     const configs = {
-        GENERAL:{title:"GENERAL AI ASSISTANT",copy:"Ask general questions, explore ideas, draft and improve writing, translate text and get help with everyday problems. Open-ended AI answers require an optional connected AI service.",actions:["EXPLAIN A TOPIC","WRITE / REWRITE","BRAINSTORM IDEAS"]},
+        GENERAL:{title:"GENERAL AI ASSISTANT",copy:"Ask anything, explore ideas, draft and improve writing, translate text and solve everyday problems with JUNO conversational AI.",actions:["EXPLAIN A TOPIC","WRITE / REWRITE","BRAINSTORM IDEAS"]},
         WORK:{title:"WORK ASSISTANT",copy:"Organize client work, summarize instructions, create checklists and draft practical SOPs.",actions:["SUMMARIZE","MAKE CHECKLIST","CREATE SOP"]},
         JOBS:{title:"JOB APPLICATIONS",copy:"Analyze a job posting, compare it with your real experience, identify gaps and prepare an honest application strategy.",actions:["ANALYZE JOB","FIT / GAP","APPLICATION PLAN"]},
         INTERVIEW:{title:"INTERVIEW COACH",copy:"Practice Technical VA interviews, improve structure and receive communication coaching without exaggerating your experience.",actions:["START MOCK","ANSWER REVIEW","RETRY"]},
@@ -10999,36 +10977,49 @@ window.selectJunoMode=function(mode){ window.__junoActiveMode=mode; return _sele
       if(!command && !stagedFile) return;
 
       commandInFlight = true;
-      if(stagedFile && typeof addMessage === "function"){
-        addMessage(`YOU: ${command || "Process attached file"} [Attachment: ${stagedFile.name}]`, "you");
-      }
       try{
-        // Preserve existing function for text commands.
         if(command && !stagedFile){
           return await originalSendCommand();
         }
 
-        // For staged files, prefer a file-aware endpoint if present; otherwise send a clear text hint.
         if(stagedFile){
-          const fd = new FormData();
-          fd.append("command", command || "Process the attached file.");
-          fd.append("file", stagedFile);
-          const modeEl = $("junoModeSelect") || $("modeSelect");
-          if(modeEl) fd.append("mode", modeEl.value || "");
-          const res = await fetch("/api/command", {method:"POST", body:fd});
-          if(!res.ok) throw new Error(`HTTP ${res.status}`);
-          const data = await res.json();
-          if(data?.response && typeof addMessage === "function") addMessage("JUNO: " + data.response, "juno");
+          const supportedTextFile = /\\.(txt|md|csv|json|log)$/i.test(stagedFile.name) ||
+            (stagedFile.type && stagedFile.type.startsWith("text/"));
+
+          if(!supportedTextFile){
+            if(typeof addMessage === "function"){
+              addMessage("JUNO: This demo can currently read text attachments (.txt, .md, .csv, .json and .log). For PDFs, Word files or images, please paste the relevant text into the console for now.", "juno");
+            }
+            return;
+          }
+
+          const fileText = await stagedFile.text();
+          const task = command || "Please review and summarize the attached text file.";
+          const attachmentPrompt = task +
+            "\\n\\n[Attached text file: " + stagedFile.name + "]\\n" +
+            fileText.slice(0, 14000) +
+            (fileText.length > 14000 ? "\\n[The remaining file text was omitted because of the demo input limit.]" : "");
+
+          if(typeof addMessage === "function"){
+            addMessage("YOU: " + task + " [Attachment: " + stagedFile.name + "]", "you");
+          }
+          if(typeof window.setJunoHudState === "function") window.setJunoHudState("THINKING");
+
+          const reply = await window.junoRequestAI(attachmentPrompt);
+          if(typeof addMessage === "function") addMessage("JUNO: " + reply, "juno");
+          if(typeof speakText === "function") await speakText(reply);
+
           if(input) input.value = "";
           stagedFile = null;
           if(attach) attach.value = "";
           updateAttachmentStatus();
         }
       }catch(err){
-        if(typeof addMessage === "function") addMessage("JUNO: I couldn't process that request.", "juno");
-        console.error(err);
+        if(typeof addMessage === "function") addMessage("JUNO: I couldn't process that request. Please try again.", "juno");
+        console.error("JUNO attachment processing error:", err);
       }finally{
         commandInFlight = false;
+        if(typeof window.setJunoHudState === "function") window.setJunoHudState("READY");
       }
     };
   }
