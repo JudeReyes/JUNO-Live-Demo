@@ -129,7 +129,7 @@ The demo can read text-based files in the browser, including:
 - `.json`
 - `.log`
 
-The current demo includes up to 14,000 characters of extracted text in the AI request. PDF, Word, and image OCR/document parsing are not currently implemented. Do not upload confidential information to a public demo.
+The current Worker accepts up to 10,000 characters per message. Larger text files are truncated before the request is sent. PDF, Word, and image OCR/document parsing are not currently implemented. Do not upload confidential information to a public demo.
 
 ## 🛠️ Technology stack
 
