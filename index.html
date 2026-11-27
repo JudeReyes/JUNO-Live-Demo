@@ -10116,15 +10116,14 @@ async function speakText(text){
     }
 
     const englishVoices = voices.filter(voice => /^en([_-]|$)/i.test(voice.lang));
-    const maleVoicePatterns = [
-        /microsoft.*\b(david|mark|guy|christopher|eric)\b/i,
-        /\b(david|mark|guy|james|daniel|alex|george|richard)\b/i
-    ];
     const femaleVoicePattern = /\b(zira|aria|jenny|michelle|samantha|victoria|karen|susan)\b/i;
 
-    let preferredVoice = englishVoices.find(voice =>
-        maleVoicePatterns.some(pattern => pattern.test(voice.name))
-    );
+    // JUNO voice priority: Microsoft Mark (US), Microsoft David (US),
+    // then Google UK English Male. Only choose voices actually available.
+    let preferredVoice =
+        englishVoices.find(voice => /microsoft mark/i.test(voice.name)) ||
+        englishVoices.find(voice => /microsoft david/i.test(voice.name)) ||
+        englishVoices.find(voice => /google uk english male/i.test(voice.name));
 
     if(!preferredVoice){
         preferredVoice = englishVoices.find(voice =>
