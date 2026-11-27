@@ -9857,14 +9857,76 @@ function addMessage(text,type){
 function junoOfflineDemoReply(command){
     const text = String(command || "").trim();
     const lower = text.toLowerCase();
+    const mode = String(window.__junoActiveMode || "WORK").toUpperCase();
+    const line = (value) => String(value || "").replace(/[<>]/g, "").trim();
 
     if (/^(hi|hello|hey)( juno)?[.! ]*$/i.test(text)) {
-        return "Hello! I'm JUNO, your Neural Operations Assistant. My browser voice is now active. I can demonstrate the interface, but live AI command processing still needs a connected backend.";
+        return "Hello! I'm JUNO, your Neural Operations Assistant. Choose a work mode or give me a task. I can demonstrate practical VA workflows, job-application preparation, interview coaching, automation planning, and client task organization.";
     }
-    if (lower.includes("help") || lower.includes("what can you do")) {
-        return "I can demonstrate the Work, Jobs, Interview Coach, Automation, and Client Tasks modes. For full AI analysis and document processing, this GitHub Pages demo needs its secure backend connection.";
+
+    if (/\b(time|date)\b/.test(lower) && /\b(what|current|today|now|time|date)\b/.test(lower)) {
+        return "Your device's local date and time is " + new Date().toLocaleString() + ". This value comes from the browser clock.";
     }
-    return "I received your command: " + text + ". The voice output is working, but I cannot generate a full AI result while the live command server is disconnected. Connect JUNO to a hosted backend to enable intelligent responses.";
+
+    if (/\b(help|what can you do|capabilities)\b/.test(lower)) {
+        return "I can demonstrate five portfolio workflows: WORK — summarize instructions, create checklists and SOPs; JOBS — review job requirements and prepare honest application materials; INTERVIEW — practice and improve answers; AUTOMATION — map Make.com and Zapier workflows; CLIENT — organize, prioritize and report client tasks. Select a mode, then try one of its action buttons.";
+    }
+
+    if (/\b(clear|erase)\s+(the\s+)?(console|chat|messages)\b/.test(lower)) {
+        return "Use the CLEAR CONSOLE control to clear the conversation display. Your browser-based demo does not store this chat as a permanent client record.";
+    }
+
+    if (mode === "WORK") {
+        if (/\b(sop|standard operating procedure|procedure)\b/.test(lower)) {
+            return "SAMPLE SOP — TASK EXECUTION\n\n1. PURPOSE: Complete the requested task consistently and accurately.\n2. REVIEW: Read the client's instructions, deadline, required format and success criteria.\n3. PREPARE: Gather the approved files, links and access needed.\n4. EXECUTE: Complete the task in small, verifiable steps.\n5. QUALITY CHECK: Verify accuracy, formatting, links and completeness.\n6. REPORT: Send a concise completion update and flag anything still pending.\n\nDEMO NOTE: Replace this sample with the client's actual process before using it operationally.";
+        }
+        if (/\b(checklist|to-do|todo|task list)\b/.test(lower)) {
+            return "SAMPLE TASK CHECKLIST\n\n☐ Confirm the objective and expected deliverable.\n☐ Review instructions, reference files and deadline.\n☐ Break the work into clear action steps.\n☐ Complete the highest-priority task first.\n☐ Check accuracy, formatting and completeness.\n☐ Save the deliverable in the agreed location.\n☐ Send the client a status or completion update.\n\nShare the actual instructions to tailor this checklist.";
+        }
+        if (/\b(summarize|summary|summarise)\b/.test(lower)) {
+            return "WORK SUMMARY FRAMEWORK\n\n• OBJECTIVE: Identify the result the client needs.\n• KEY REQUIREMENTS: Extract deliverables, format, deadline and constraints.\n• ACTIONS: Convert each requirement into a task.\n• PRIORITY: Handle urgent and dependency-sensitive items first.\n• OPEN QUESTIONS: Confirm missing details before proceeding.\n\nPaste the client instructions after this request for a more specific demonstration.";
+        }
+        if (/\b(email|reply|respond|message|draft)\b/.test(lower)) {
+            return "SAMPLE PROFESSIONAL CLIENT EMAIL\n\nSubject: Update on Your Request\n\nHi [Client Name],\n\nThank you for sharing the details. I've reviewed the request and will organize the work according to the agreed priorities and deadline. I'll let you know if I need any clarification and will provide an update once the task is complete.\n\nBest regards,\n[Your Name]\n\nReplace the placeholders and confirm the details before sending.";
+        }
+        return "WORK ASSISTANT — READY\n\nI can help structure this into an actionable workflow. A good starting point is to identify: (1) the desired outcome, (2) required steps, (3) deadline and priority, (4) files or access needed, and (5) how completion will be verified.\n\nTry: “Create a checklist”, “Write an SOP”, “Summarize client instructions”, or “Draft a client email”.";
+    }
+
+    if (mode === "JOBS") {
+        if (/\b(cover letter|application letter)\b/.test(lower)) {
+            return "APPLICATION DRAFTING\n\nI can prepare a tailored cover letter using your actual experience. Please provide the job title, company, job description and the experience you want highlighted.\n\nJUNO PRINCIPLE: Never invent qualifications, employment history, certifications or results. The final draft should be checked before submission.";
+        }
+        if (/\b(resume|cv|bullet|experience)\b/.test(lower)) {
+            return "RESUME SUPPORT\n\nA strong experience entry should include: ACTION VERB + TASK / EQUIPMENT + QUALITY OR PROCESS CONTEXT + VERIFIED RESULT (if available).\n\nExample structure: “Operated production equipment while following work instructions, safety requirements and quality inspection procedures.”\n\nShare the actual role and duties to create accurate, targeted bullet points.";
+        }
+        return "JOB APPLICATION REVIEW — SAMPLE\n\n1. ROLE REQUIREMENTS: Identify essential duties, skills and experience.\n2. MATCHES: Compare each requirement with evidence from your actual background.\n3. GAPS: Identify requirements that need training or clarification.\n4. APPLICATION PLAN: Tailor the resume and cover letter honestly.\n5. QUESTIONS: Prepare points to confirm with the recruiter.\n\nPaste a job description and your relevant experience for a focused review. This demo does not access live job listings.";
+    }
+
+    if (mode === "INTERVIEW") {
+        if (/\b(start|begin|mock|practice|question)\b/.test(lower)) {
+            return "MOCK INTERVIEW — QUESTION 1\n\n“Tell me about yourself and explain how your previous experience prepares you for this role.”\n\nAnswer in 60–90 seconds. Use this structure: present professional summary → relevant experience → strengths supported by examples → why the role interests you.\n\nType your answer and choose ANSWER REVIEW for a sample coaching review.";
+        }
+        if (/\b(review|feedback|improve|evaluate|answer)\b/.test(lower)) {
+            return "INTERVIEW ANSWER REVIEW FRAMEWORK\n\n• CLARITY: Did you answer the question directly?\n• STRUCTURE: Is the answer easy to follow?\n• EVIDENCE: Did you give a real example?\n• RELEVANCE: Does the example match the role?\n• DELIVERY: Is the tone confident and concise?\n\nPaste your actual answer for a more useful review. This sample does not score or record your voice.";
+        }
+        return "INTERVIEW COACH — READY\n\nI can demonstrate common Technical VA interview practice. Try “Start mock interview” or paste an answer and ask for feedback. Focus on specific examples, clear steps and truthful descriptions of your skills.";
+    }
+
+    if (mode === "AUTOMATION") {
+        return "AUTOMATION WORKFLOW — SAMPLE PLAN\n\nGOAL: Capture a new client inquiry and organize follow-up.\n\nTRIGGER: A new response arrives in an approved form.\nACTION 1: Validate required fields (name, email, request).\nACTION 2: Add the inquiry to an approved tracking sheet or CRM.\nACTION 3: Send an acknowledgment email using an approved template.\nACTION 4: Notify the responsible team member.\nERROR HANDLING: Check missing fields, prevent duplicate records and log failed steps for review.\n\nBEFORE ACTIVATION: Confirm app permissions, field mapping, privacy requirements and client approval. No automation is actually executed by this portfolio demo.";
+    }
+
+    if (mode === "CLIENT") {
+        if (/\b(update|status|completion|complete|finished)\b/.test(lower)) {
+            return "SAMPLE CLIENT COMPLETION UPDATE\n\nHi [Client Name],\n\nThe requested task has been completed. I checked the deliverable for accuracy and completeness and saved it in [agreed location].\n\nPlease let me know if you would like any adjustments.\n\nBest regards,\n[Your Name]\n\nOnly use this message after verifying that the work is actually complete.";
+        }
+        if (/\b(priorit|urgent|organize|organise|plan)\b/.test(lower)) {
+            return "CLIENT TASK PRIORITY PLAN\n\n1. URGENT: Tasks with immediate deadlines or that block other work.\n2. HIGH: Important deliverables due soon.\n3. NORMAL: Routine work with a flexible deadline.\n4. WAITING: Items dependent on client feedback or access.\n\nFor each task, record the owner, due date, next action and status. Share the client message to turn it into a specific task plan.";
+        }
+        return "CLIENT TASK INTAKE — SAMPLE\n\n• REQUEST: What does the client need?\n• DELIVERABLE: What should be handed over?\n• DEADLINE: When is it due, including time zone?\n• PRIORITY: What is urgent or blocking?\n• DEPENDENCIES: Are files, approvals or access missing?\n• NEXT STEP: Confirm the first action and report progress.\n\nPaste a client instruction to demonstrate task breakdown.";
+    }
+
+    return "JUNO received your request in " + mode + " mode. For this portfolio demonstration, I can provide structured sample workflows and templates. Try a suggested action in the active mode or add the specific task details to your message. Live AI reasoning, external integrations and file analysis are not connected in this demo.";
 }
 
 /* =========================================================
