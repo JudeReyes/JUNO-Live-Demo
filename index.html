@@ -8793,6 +8793,62 @@ html,body{
 @media(prefers-reduced-motion:reduce){.juno-activity-wave span{animation:none!important;transition:none!important;}}
 </style>
 
+
+<style id="juno-phase3-console-polish">
+/* Phase 3: clearer conversation hierarchy without changing the JUNO theme. */
+.juno-command-card .messages{padding:16px 14px 18px !important; gap:0;}
+.juno-command-card .console .message{
+  position:relative;
+  width:fit-content !important;
+  max-width:min(88%, 760px) !important;
+  padding:12px 14px 24px !important;
+  margin:10px 0 !important;
+  border:1px solid rgba(0,234,255,.14);
+  border-radius:12px;
+  white-space:pre-wrap !important;
+  overflow-wrap:anywhere;
+  box-shadow:0 5px 18px rgba(0,0,0,.16);
+}
+.juno-command-card .console .message::before{
+  content:attr(data-role);
+  display:block;
+  margin-bottom:6px;
+  font-size:9px;
+  font-weight:800;
+  letter-spacing:1.8px;
+  opacity:.82;
+}
+.juno-command-card .console .message::after{
+  content:attr(data-time);
+  position:absolute;
+  right:12px;
+  bottom:7px;
+  font-size:9px;
+  letter-spacing:.4px;
+  color:rgba(220,245,250,.48);
+}
+.juno-command-card .console .message.you{
+  margin-left:auto !important;
+  margin-right:2px !important;
+  color:#f4fcff;
+  text-align:left;
+  background:linear-gradient(135deg,rgba(0,190,220,.13),rgba(0,90,120,.12));
+  border-color:rgba(0,234,255,.25);
+  border-bottom-right-radius:4px;
+}
+.juno-command-card .console .message.juno{
+  margin-right:auto !important;
+  margin-left:2px !important;
+  color:#baf7ff;
+  background:linear-gradient(135deg,rgba(25,52,76,.55),rgba(12,26,43,.72));
+  border-color:rgba(0,234,255,.16);
+  border-bottom-left-radius:4px;
+}
+@media(max-width:520px){
+  .juno-command-card .console .message{max-width:94% !important;padding:10px 11px 23px !important;}
+}
+</style>
+
 </head>
 
 
@@ -9826,6 +9882,8 @@ function addMessage(text,type){
 
     const div = document.createElement("div");
     div.className = "message " + type;
+    div.dataset.time = new Date().toLocaleTimeString([], {hour:"2-digit", minute:"2-digit"});
+    div.dataset.role = type === "you" ? "YOU" : "JUNO";
     div.textContent = text;
     messages.appendChild(div);
     messages.scrollTop = messages.scrollHeight;
@@ -9876,6 +9934,29 @@ function junoHandleQuickCommand(command){
         }else{
             window.location.assign(url);
         }
+        return true;
+    }
+
+    // Identity and company-name recognition: keep named entities distinct from broad industries.
+    if(/\b(who (?:built|created|made|developed) you|who is your (?:creator|developer)|sino ang gumawa sa iyo|sino gumawa sa iyo)\b/i.test(lower)){
+        const reply = "I'm JUNO — Jude's Neural Operations Assistant. I was designed and built by Jude Reyes as a portfolio project to demonstrate virtual-assistant workflows, voice interaction and productivity concepts.";
+        addMessage("JUNO: " + reply, "juno");
+        speakText(reply);
+        return true;
+    }
+
+    if(/\benikon(?:\s+aerospace)?\b/i.test(lower)){
+        let focus = "the company itself";
+        if(/\b(hir(?:e|ing)|vacanc(?:y|ies)|job|jobs|production|operator|work|career|recruit)\b/i.test(lower)){
+            focus = "its recruitment and production-job opportunity";
+        }else if(/\b(germany|croatia|assignment|posting|contract|salary|pay|hour|accommodation|visa|permit)\b/i.test(lower)){
+            focus = "the Croatia-to-Germany employment arrangement";
+        }else if(/\b(legit|legitimate|scam|fraud|verify|verification|safe|trust)\b/i.test(lower)){
+            focus = "whether the company, recruiter and job offer can be independently verified";
+        }
+        const reply = "ENIKON AEROSPACE — COMPANY-SPECIFIC REQUEST\n\nI recognize “Enikon Aerospace” as the specific company name you mentioned, not as a request for general information about the aerospace industry. Your question appears to concern " + focus + ".\n\nThis JUNO demo does not have live web research connected, so I cannot confirm current hiring, company registration, recruiter authorization or the legitimacy of an offer. To verify it, check the company's official contact channels, confirm the recruiter's authorization directly with the company, review the written employment contract and assignment terms, and independently confirm the applicable work-permit and immigration process. Do not pay recruitment or processing fees without checking the rules with the relevant Philippine authorities.\n\nIf you share the exact Enikon question or offer text, I can help organize the points that need verification.";
+        addMessage("JUNO: " + reply, "juno");
+        speakText(reply);
         return true;
     }
 
@@ -9933,7 +10014,23 @@ function junoOfflineDemoReply(command){
     const line = (value) => String(value || "").replace(/[<>]/g, "").trim();
 
     if (/^(hi|hello|hey)( juno)?[.! ]*$/i.test(text)) {
-        return "Hello! I'm JUNO, your Neural Operations Assistant. Choose a work mode or give me a task. I can demonstrate practical VA workflows, job-application preparation, interview coaching, automation planning, and client task organization.";
+        return "Hello! I'm JUNO, Jude's Neural Operations Assistant, designed and built by Jude Reyes. Choose a work mode or give me a task. I can demonstrate practical VA workflows, job-application preparation, interview coaching, automation planning, and client task organization.";
+    }
+
+    if (/\b(who (?:built|created|made|developed) you|who is your (?:creator|developer)|sino ang gumawa sa iyo|sino gumawa sa iyo)\b/i.test(lower)) {
+        return "I'm JUNO — Jude's Neural Operations Assistant. I was designed and built by Jude Reyes as a portfolio project to demonstrate virtual-assistant workflows, voice interaction and productivity concepts.";
+    }
+
+    if (/\benikon(?:\s+aerospace)?\b/i.test(lower)) {
+        let focus = "the company itself";
+        if (/\b(hir(?:e|ing)|vacanc(?:y|ies)|job|jobs|production|operator|work|career|recruit)\b/i.test(lower)) {
+            focus = "its recruitment and production-job opportunity";
+        } else if (/\b(germany|croatia|assignment|posting|contract|salary|pay|hour|accommodation|visa|permit)\b/i.test(lower)) {
+            focus = "the Croatia-to-Germany employment arrangement";
+        } else if (/\b(legit|legitimate|scam|fraud|verify|verification|safe|trust)\b/i.test(lower)) {
+            focus = "whether the company, recruiter and job offer can be independently verified";
+        }
+        return "ENIKON AEROSPACE — COMPANY-SPECIFIC REQUEST\n\nI recognize “Enikon Aerospace” as the specific company name you mentioned, not as a request for general information about the aerospace industry. Your question appears to concern " + focus + ".\n\nThis JUNO demo does not have live web research connected, so I cannot confirm current hiring, company registration, recruiter authorization or the legitimacy of an offer. To verify it, check the company's official contact channels, confirm the recruiter's authorization directly with the company, review the written employment contract and assignment terms, and independently confirm the applicable work-permit and immigration process. Do not pay recruitment or processing fees without checking the rules with the relevant Philippine authorities.\n\nIf you share the exact Enikon question or offer text, I can help organize the points that need verification.";
     }
 
     if (/\b(time|date)\b/.test(lower) && /\b(what|current|today|now|time|date)\b/.test(lower)) {
