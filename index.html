@@ -10079,7 +10079,15 @@ async function sendVoiceCommand(text){
    INITIALIZE
 ========================================================= */
 
+let junoInitialized = false;
+
 function initializeJuno(){
+
+    if(junoInitialized){
+        if(typeof window.setJunoHudState === "function") window.setJunoHudState("READY");
+        return;
+    }
+    junoInitialized = true;
 
     addMessage(
         "JUNO: Initialization complete. The interface is ready. Select a work mode or enter a command to begin.",
@@ -10146,12 +10154,20 @@ let junoCurrentAudio = null;
 let junoCancelAudio = null;
 let junoSpeechUtterance = null;
 
+let junoSpeechRunId = 0;
+
 function stopCurrentJunoAudio(){
-    try{
-        if(window.speechSynthesis) window.speechSynthesis.cancel();
-    }catch(error){}
-    junoSpeechUtterance = null;
+    junoSpeechRunId++;
+    const cancelCurrent = junoCancelAudio;
     junoCancelAudio = null;
+    if(typeof cancelCurrent === "function"){
+        try{ cancelCurrent(); }catch(error){}
+    }else{
+        try{
+            if(window.speechSynthesis) window.speechSynthesis.cancel();
+        }catch(error){}
+    }
+    junoSpeechUtterance = null;
     if(junoCurrentAudio){
         try{ junoCurrentAudio.pause(); }catch(error){}
         junoCurrentAudio = null;
@@ -10170,6 +10186,7 @@ async function speakText(text){
     }
 
     stopCurrentJunoAudio();
+    const speechRunId = junoSpeechRunId;
 
     const voiceText = document.getElementById("voiceText");
     const voiceDisplay = document.getElementById("voiceDisplay");
@@ -10199,6 +10216,8 @@ async function speakText(text){
             setTimeout(finish, 900);
         });
     }
+
+    if(speechRunId !== junoSpeechRunId) return;
 
     const englishVoices = voices.filter(voice => /^en([_-]|$)/i.test(voice.lang));
     const femaleVoicePattern = /\b(zira|aria|jenny|michelle|samantha|victoria|karen|susan)\b/i;
@@ -10237,15 +10256,20 @@ async function speakText(text){
         const finish = () => {
             if(finished) return;
             finished = true;
+            const isCurrentSpeech = speechRunId === junoSpeechRunId;
             if(junoSpeechUtterance === utterance) junoSpeechUtterance = null;
-            if(voiceText) voiceText.textContent = "STANDBY";
-            voiceDisplay?.classList.remove("voice-active");
-            humanoid?.classList.remove("speaking");
-            if(typeof window.setJunoHudState === "function") window.setJunoHudState("READY");
+            if(isCurrentSpeech){
+                junoCancelAudio = null;
+                if(voiceText) voiceText.textContent = "STANDBY";
+                voiceDisplay?.classList.remove("voice-active");
+                humanoid?.classList.remove("speaking");
+                if(typeof window.setJunoHudState === "function") window.setJunoHudState("READY");
+            }
             resolve();
         };
         utterance.onend = finish;
         utterance.onerror = finish;
+        utterance.oncancel = finish;
         junoCancelAudio = () => {
             try{ window.speechSynthesis.cancel(); }catch(error){}
             finish();
@@ -10507,35 +10531,9 @@ function startRecognitionSession(){if(!junoContinuousMode||junoResponseBusy||jun
 })();
 
 /* =========================================================
-   KEEP EXISTING VOICE FUNCTIONS IN CHARGE
-   This only updates the visual HUD state.
+   VOICE HUD STATE IS CONTROLLED BY speakText ITSELF.
+   Avoid an outer wrapper resetting a newer speech request.
 ========================================================= */
-
-(function(){
-
-    const originalSpeakText = window.speakText;
-
-    if(typeof originalSpeakText === "function"){
-
-        window.speakText = async function(text){
-
-            if(typeof window.setJunoHudState === "function"){
-                window.setJunoHudState("SPEAKING");
-            }
-
-            try{
-                return await originalSpeakText(text);
-            }finally{
-                if(typeof window.setJunoHudState === "function"){
-                    window.setJunoHudState("READY");
-                }
-            }
-
-        };
-
-    }
-
-})();
 
 
 
@@ -10669,7 +10667,11 @@ window.selectJunoMode=function(mode){ window.__junoActiveMode=mode; return _sele
   const $ = (id) => document.getElementById(id);
 
   function stopSpeechNow(){
-    try{ window.speechSynthesis?.cancel(); }catch(e){}
+    if(typeof window.stopCurrentJunoAudio === "function"){
+      try{ window.stopCurrentJunoAudio(); }catch(e){}
+    }else{
+      try{ window.speechSynthesis?.cancel(); }catch(e){}
+    }
     pendingSpeech = [];
     speechActive = false;
     try{
