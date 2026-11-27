@@ -10370,7 +10370,11 @@ function runJunoSystemCheck(){
     const speechSupported = "speechSynthesis" in window && "SpeechSynthesisUtterance" in window;
     const recognitionSupported = !!(window.SpeechRecognition || window.webkitSpeechRecognition);
     const secure = window.isSecureContext;
-    const voiceCount = speechSupported ? window.speechSynthesis.getVoices().length : 0;
+    const availableVoices = speechSupported ? window.speechSynthesis.getVoices() : [];
+    const voiceCount = availableVoices.length;
+    const filipinoVoiceAvailable = availableVoices.some(voice =>
+        /^(fil|tl)([_-]|$)/i.test(voice.lang) || /filipino|tagalog/i.test(voice.name)
+    );
 
     const lines = [
         "SYSTEM CHECK COMPLETE",
@@ -10379,6 +10383,7 @@ function runJunoSystemCheck(){
         "Microphone recognition: " + (recognitionSupported ? "AVAILABLE" : "NOT SUPPORTED"),
         "Secure browser context: " + (secure ? "YES" : "NO"),
         "Browser voices currently loaded: " + voiceCount,
+        "Filipino/Tagalog voice: " + (filipinoVoiceAvailable ? "AVAILABLE" : "NOT FOUND IN THIS BROWSER"),
         "Live AI backend: CLOUDFLARE WORKERS AI — CONFIGURED"
     ];
 
@@ -10925,6 +10930,8 @@ window.selectJunoMode=function(mode){ window.__junoActiveMode=mode; return _sele
 
   function stopSpeechNow(){
     if(recognitionRunning && recognition){
+      window.__junoCancelVoiceAutoSend = true;
+      lastTranscript = "";
       try{ recognition.stop(); }catch(e){}
       recognitionRunning = false;
       const listenButton = document.querySelector(".juno-chat-control.listen");
@@ -10988,6 +10995,7 @@ window.selectJunoMode=function(mode){ window.__junoActiveMode=mode; return _sele
     recognition.continuous = false;
     recognition.interimResults = true;
     lastTranscript = "";
+    window.__junoCancelVoiceAutoSend = false;
 
     recognition.onstart = () => {
       recognitionRunning = true;
@@ -11028,7 +11036,12 @@ window.selectJunoMode=function(mode){ window.__junoActiveMode=mode; return _sele
       if(listenButton) listenButton.textContent = "🎙 LISTEN";
       const commandBox = $("commandInput");
       const vt = $("voiceText");
-      if(lastTranscript && commandBox){
+      if(window.__junoCancelVoiceAutoSend){
+        window.__junoCancelVoiceAutoSend = false;
+        lastTranscript = "";
+        if(commandBox) commandBox.value = "";
+        if(vt) vt.textContent = "LISTENING CANCELLED";
+      }else if(lastTranscript && commandBox){
         const spokenCommand = lastTranscript.trim();
         commandBox.value = spokenCommand;
         lastTranscript = "";
