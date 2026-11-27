@@ -8762,6 +8762,37 @@ html,body{
 }
 </style>
 
+
+<style id="juno-phase2-hud">
+/* JUNO 2.0 — live activity monitor and responsive state feedback */
+.juno-activity-wave span{height:5px;opacity:.48;transition:height .18s ease,opacity .18s ease;}
+.juno-activity-wave[data-state="LISTENING"] span,
+.juno-activity-wave[data-state="THINKING"] span,
+.juno-activity-wave[data-state="SPEAKING"] span{opacity:1;animation:voiceWave .52s ease-in-out infinite alternate;}
+.juno-activity-wave[data-state="THINKING"] span{animation-duration:.34s;}
+.juno-activity-wave[data-state="OFFLINE"] span{opacity:.22;}
+.juno-activity-wave span:nth-child(2){animation-delay:.08s;}
+.juno-activity-wave span:nth-child(3){animation-delay:.16s;}
+.juno-activity-wave span:nth-child(4){animation-delay:.24s;}
+.juno-activity-wave span:nth-child(5){animation-delay:.32s;}
+.juno-activity-wave span:nth-child(6){animation-delay:.40s;}
+.juno-activity-wave span:nth-child(7){animation-delay:.48s;}
+.juno-signal-track{height:4px;margin:4px 0 12px;background:rgba(0,234,255,.09);overflow:hidden;border-radius:8px;}
+.juno-signal-track span{display:block;width:18%;height:100%;background:var(--cyan);box-shadow:0 0 9px var(--cyan);transition:width .25s ease;}
+.juno-activity-heading{display:flex;justify-content:space-between;align-items:center;margin:9px 0 5px;padding-top:8px;border-top:1px solid rgba(0,234,255,.12);font-size:7px;letter-spacing:1.5px;color:rgba(205,246,255,.68);}
+.juno-activity-live{color:var(--green);font-size:6px;letter-spacing:1px;}
+.juno-activity-feed{list-style:none;margin:0;padding:0;display:grid;gap:5px;}
+.juno-activity-feed li{display:grid;grid-template-columns:55px minmax(0,1fr);gap:7px;align-items:start;padding:5px 6px;border-left:1px solid rgba(0,234,255,.25);background:rgba(0,234,255,.025);font-size:7px;line-height:1.4;}
+.juno-activity-feed li span:first-child{color:var(--cyan);letter-spacing:.7px;}
+.juno-activity-feed li span:last-child{color:rgba(220,242,247,.68);overflow-wrap:anywhere;}
+#hudStateRibbon[data-state="THINKING"]{border-color:rgba(180,130,255,.65);color:#d9c2ff;}
+#hudStateRibbon[data-state="OFFLINE"]{border-color:rgba(255,180,100,.5);color:#ffc58d;}
+.humanoid.state-thinking .chest-core{filter:brightness(1.5);}
+@media(max-width:850px){.juno-activity-feed{grid-template-columns:1fr 1fr;}.juno-activity-feed li{min-width:0;}}
+@media(max-width:520px){.juno-activity-feed{grid-template-columns:1fr;}.juno-activity-feed li{font-size:8px;}}
+@media(prefers-reduced-motion:reduce){.juno-activity-wave span{animation:none!important;transition:none!important;}}
+</style>
+
 </head>
 
 
@@ -8924,31 +8955,20 @@ html,body{
     <span class="panel-interaction-hint">LIVE SIGNAL</span>
 
 
-    <div class="wave"
-         style="height:50px;">
-
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-        <span></span>
-
+    <div class="wave juno-activity-wave" id="junoActivityWave" data-state="READY" style="height:50px;" aria-label="Voice activity waveform">
+        <span></span><span></span><span></span><span></span><span></span><span></span><span></span>
     </div>
-
 
     <div class="metric">
-
-        <span>
-            SIGNAL LEVEL
-        </span>
-
-        <span class="green">
-            ACTIVE
-        </span>
-
+        <span>SIGNAL STATUS</span>
+        <span class="green" id="junoSignalStatus">READY</span>
     </div>
+    <div class="juno-signal-track" aria-hidden="true"><span id="junoSignalBar"></span></div>
+
+    <div class="juno-activity-heading"><span>RECENT ACTIVITY</span><span class="juno-activity-live">LIVE FEED</span></div>
+    <ul class="juno-activity-feed" id="junoActivityFeed" aria-live="polite">
+        <li><span>SYSTEM</span><span>HUD monitor ready</span></li>
+    </ul>
 
 </section>
 
@@ -9804,19 +9824,20 @@ input.addEventListener(
 
 function addMessage(text,type){
 
-    const div =
-        document.createElement("div");
-
-    div.className =
-        "message " + type;
-
-    div.textContent =
-        text;
-
+    const div = document.createElement("div");
+    div.className = "message " + type;
+    div.textContent = text;
     messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
 
-    messages.scrollTop =
-        messages.scrollHeight;
+    if(typeof window.junoRecordActivity === "function"){
+        const detail = String(text || "").replace(/^(YOU|JUNO):\\s*/i,"").replace(/\\s+/g," ").trim();
+        if(type === "you" && detail){
+            window.junoRecordActivity("COMMAND", detail);
+        }else if(type === "juno" && detail && !/^(Neural interface initialized|Awaiting system initialization)/i.test(detail)){
+            window.junoRecordActivity("JUNO", detail);
+        }
+    }
 
 }
 
@@ -10352,7 +10373,12 @@ function startRecognitionSession(){if(!junoContinuousMode||junoResponseBusy||jun
 
     function setJunoHudState(state){
 
-        const current = state || "READY";
+        const previous = window.__junoHudState || "";
+        const current = state === "PROCESSING" ? "THINKING" : (state || "READY");
+        window.__junoHudState = current;
+        if(previous && previous !== current && typeof window.junoRecordActivity === "function"){
+            window.junoRecordActivity("STATE", current);
+        }
 
         const infoState =
             document.getElementById("junoInfoLiveState");
@@ -10380,10 +10406,7 @@ function startRecognitionSession(){if(!junoContinuousMode||junoResponseBusy||jun
         }
 
         if(infoInput){
-            infoInput.textContent =
-                current === "LISTENING"
-                    ? "ACTIVE"
-                    : "READY";
+            infoInput.textContent = current === "LISTENING" ? "ACTIVE" : current === "THINKING" ? "PROCESSING" : "READY";
         }
 
         if(infoOutput){
@@ -10394,21 +10417,11 @@ function startRecognitionSession(){if(!junoContinuousMode||junoResponseBusy||jun
         }
 
         if(infoSub){
-            infoSub.textContent =
-                current === "LISTENING"
-                    ? "NEURAL INPUT ACTIVE"
-                    : current === "PROCESSING"
-                        ? "NEURAL PATHWAY ACTIVE"
-                        : current === "SPEAKING"
-                            ? "AUDIO TRANSMISSION ACTIVE"
-                            : "NEURAL SYSTEM STABLE";
+            infoSub.textContent = current === "LISTENING" ? "NEURAL INPUT ACTIVE" : current === "THINKING" ? "REQUEST PROCESSING" : current === "SPEAKING" ? "AUDIO TRANSMISSION ACTIVE" : current === "OFFLINE" ? "LOCAL DEMO MODE" : "NEURAL SYSTEM STABLE";
         }
 
         if(inputMode){
-            inputMode.textContent =
-                current === "LISTENING"
-                    ? "ACTIVE"
-                    : "READY";
+            inputMode.textContent = current === "LISTENING" ? "ACTIVE" : current === "THINKING" ? "PROCESSING" : "READY";
         }
 
         if(outputState){
@@ -10419,30 +10432,22 @@ function startRecognitionSession(){if(!junoContinuousMode||junoResponseBusy||jun
         }
 
         if(visualActivity){
-            visualActivity.textContent =
-                current === "LISTENING"
-                    ? "HIGH"
-                    : current === "PROCESSING"
-                        ? "PEAK"
-                        : current === "SPEAKING"
-                            ? "ACTIVE"
-                            : "NORMAL";
+            visualActivity.textContent = current === "LISTENING" ? "HIGH" : current === "THINKING" ? "PEAK" : current === "SPEAKING" ? "ACTIVE" : current === "OFFLINE" ? "LOW" : "NORMAL";
         }
         const listening = current === "LISTENING";
+        const thinking = current === "THINKING";
         const speaking = current === "SPEAKING";
+        const signalStatus = document.getElementById("junoSignalStatus");
+        const signalBar = document.getElementById("junoSignalBar");
+        const activityWave = document.getElementById("junoActivityWave");
+        if(signalStatus) signalStatus.textContent = current;
+        if(signalBar) signalBar.style.width = current === "LISTENING" ? "78%" : thinking ? "92%" : speaking ? "68%" : current === "OFFLINE" ? "10%" : "18%";
+        if(activityWave) activityWave.dataset.state = current;
 
         if(stateRibbon){
-            stateRibbon.textContent =
-                listening
-                    ? "LISTENING // INPUT ACTIVE"
-                    : speaking
-                        ? "SPEAKING // OUTPUT ACTIVE"
-                        : "SYSTEM READY";
-
-            stateRibbon.classList.toggle(
-                "active",
-                listening || speaking
-            );
+            stateRibbon.textContent = listening ? "LISTENING // INPUT ACTIVE" : thinking ? "THINKING // REQUEST PROCESSING" : speaking ? "SPEAKING // OUTPUT ACTIVE" : current === "OFFLINE" ? "OFFLINE // LOCAL DEMO" : "SYSTEM READY";
+            stateRibbon.dataset.state = current;
+            stateRibbon.classList.toggle("active", listening || thinking || speaking);
         }
 
         if(infoState){
@@ -10454,21 +10459,11 @@ function startRecognitionSession(){if(!junoContinuousMode||junoResponseBusy||jun
         }
 
         if(voiceEngine){
-            voiceEngine.textContent =
-                listening
-                    ? "LISTENING"
-                    : speaking
-                        ? "TRANSMITTING"
-                        : "READY";
+            voiceEngine.textContent = listening ? "LISTENING" : thinking ? "THINKING" : speaking ? "TRANSMITTING" : current === "OFFLINE" ? "OFFLINE" : "READY";
         }
 
         if(neuralState){
-            neuralState.textContent =
-                listening
-                    ? "HIGH"
-                    : speaking
-                        ? "TRANSMITTING"
-                        : "NORMAL";
+            neuralState.textContent = listening ? "HIGH" : thinking ? "PROCESSING" : speaking ? "TRANSMITTING" : "NORMAL";
         }
 
         if(humanoid){
@@ -10477,10 +10472,8 @@ function startRecognitionSession(){if(!junoContinuousMode||junoResponseBusy||jun
                 listening
             );
 
-            humanoid.classList.toggle(
-                "state-speaking",
-                speaking
-            );
+            humanoid.classList.toggle("state-speaking", speaking);
+            humanoid.classList.toggle("state-thinking", thinking);
         }
     }
 
@@ -10665,6 +10658,22 @@ window.selectJunoMode=function(mode){ window.__junoActiveMode=mode; return _sele
   let lastTranscriptAt = 0;
 
   const $ = (id) => document.getElementById(id);
+
+  window.junoRecordActivity("SYSTEM","Activity monitor online");
+
+  window.junoRecordActivity = function(kind, detail){
+    const feed = $("junoActivityFeed");
+    if(!feed) return;
+    const item = document.createElement("li");
+    const label = document.createElement("span");
+    const message = document.createElement("span");
+    label.textContent = String(kind || "EVENT").toUpperCase().slice(0,12);
+    const clean = String(detail || "").replace(/\\s+/g," ").trim();
+    message.textContent = clean.length > 78 ? clean.slice(0,75) + "…" : clean;
+    item.append(label,message);
+    feed.prepend(item);
+    while(feed.children.length > 5) feed.lastElementChild.remove();
+  };
 
   function stopSpeechNow(){
     if(typeof window.stopCurrentJunoAudio === "function"){
