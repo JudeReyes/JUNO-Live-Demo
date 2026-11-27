@@ -9850,6 +9850,66 @@ function addMessage(text,type){
 
 
 /* =========================================================
+   JUNO — LOCAL QUICK COMMAND ROUTER
+   Website links are user-clicked; live search requires a backend.
+========================================================= */
+
+function junoHandleQuickCommand(command){
+    const raw = String(command || "").trim();
+    const lower = raw.toLowerCase().replace(/^(hey\s+)?(juno|google)[,\s]+/i, "").trim();
+
+    const sites = {
+        youtube: "https://www.youtube.com/",
+        google: "https://www.google.com/",
+        gmail: "https://mail.google.com/",
+        facebook: "https://www.facebook.com/",
+        linkedin: "https://www.linkedin.com/"
+    };
+
+    const openMatch = lower.match(/\b(?:open|go to|launch|visit)\s+(youtube|google|gmail|facebook|linkedin)\b/i);
+    if(openMatch){
+        const site = openMatch[1].toLowerCase();
+        const url = sites[site];
+        const message = document.createElement("div");
+        message.className = "message juno";
+        message.textContent = "JUNO: I found the " + site.toUpperCase() + " website. Select the link below to open it in a new tab.";
+        messages.appendChild(message);
+
+        const linkMessage = document.createElement("div");
+        linkMessage.className = "message juno";
+        const link = document.createElement("a");
+        link.href = url;
+        link.target = "_blank";
+        link.rel = "noopener noreferrer";
+        link.textContent = "OPEN " + site.toUpperCase();
+        link.style.color = "var(--cyan)";
+        link.style.textDecoration = "underline";
+        link.style.fontWeight = "700";
+        linkMessage.appendChild(link);
+        messages.appendChild(linkMessage);
+        messages.scrollTop = messages.scrollHeight;
+        speakText("I found " + site + ". Select the link in the command console to open it.");
+        return true;
+    }
+
+    const searchIntent = /\b(search|find|look for|look up)\b/i.test(lower);
+    const companyIntent = /\b(compan(?:y|ies)|employer|business(?:es)?|con compan(?:y|ies))\b/i.test(lower);
+    const jobIntent = /\b(job listings|job openings|vacanc(?:y|ies)|available jobs|hiring)\b/i.test(lower);
+
+    if(searchIntent && (companyIntent || jobIntent)){
+        const reply = companyIntent
+            ? "COMPANY SEARCH REQUEST RECEIVED\n\nI can help organize a company search, but live web search is not connected in this portfolio demo. Please specify the industry and target location (city or country). I can then prepare search keywords and a company-research checklist. No companies or vacancies have been verified."
+            : "JOB SEARCH REQUEST RECEIVED\n\nLive job listings are not connected in this portfolio demo, so I cannot verify current vacancies. Specify the job title, industry and target location, and I can prepare targeted search terms and an application checklist.";
+        addMessage("JUNO: " + reply, "juno");
+        speakText(reply);
+        return true;
+    }
+
+    return false;
+}
+
+
+/* =========================================================
    GITHUB PAGES DEMO COMMAND FALLBACK
    Real AI responses require a separately hosted backend.
 ========================================================= */
@@ -9942,6 +10002,8 @@ async function sendCommand(){
 
     addMessage("YOU: " + text, "you");
     input.value = "";
+    if(junoHandleQuickCommand(text)) return;
+    input.value = "";
     junoCommandBusy = true;
 
     try{
@@ -9979,6 +10041,8 @@ async function sendCommand(){
 async function sendVoiceCommand(text){
     const cleaned = String(text || "").trim();
     if(!cleaned) return;
+
+    if(junoHandleQuickCommand(cleaned)) return;
 
     try{
         const response = await fetch("/api/command", {
