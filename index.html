@@ -10743,27 +10743,45 @@ window.selectJunoMode=function(mode){ window.__junoActiveMode=mode; return _sele
       let finalText = "";
       let interim = "";
       for(let i = event.resultIndex; i < event.results.length; i++){
-        const text = event.results[i][0].transcript;
-        if(event.results[i].isFinal) finalText += text;
-        else interim += text;
+        const transcript = event.results[i][0].transcript;
+        if(event.results[i].isFinal) finalText += transcript;
+        else interim += transcript;
       }
+
+      // Show live speech recognition in the command box, not only in the HUD.
+      const commandBox = $("commandInput");
+      const recognizedText = (finalText || interim).trim();
+      if(commandBox && recognizedText){
+        commandBox.value = recognizedText;
+      }
+
       if(interim){
         const vt = $("voiceText");
         if(vt) vt.textContent = interim;
       }
+
       if(finalText.trim()){
         lastTranscript = finalText.trim();
         lastTranscriptAt = Date.now();
+        if(commandBox) commandBox.value = lastTranscript;
         clearTimeout(silenceTimer);
-        silenceTimer = setTimeout(() => {
+        silenceTimer = setTimeout(async () => {
           if(lastTranscript && !commandInFlight && !speechActive){
-            const text = lastTranscript;
+            const text = lastTranscript.trim();
             lastTranscript = "";
-            if(typeof sendVoiceCommand === "function"){
-              sendVoiceCommand(text);
-            } else if(typeof sendCommand === "function"){
-              const input = $("commandInput");
-              if(input){ input.value = text; sendCommand(); }
+            commandInFlight = true;
+            const input = $("commandInput");
+            if(input) input.value = text;
+            if(typeof addMessage === "function") addMessage("YOU: " + text, "you");
+            try{
+              if(typeof sendVoiceCommand === "function"){
+                await sendVoiceCommand(text);
+              } else if(typeof sendCommand === "function"){
+                if(input) sendCommand();
+              }
+            }finally{
+              commandInFlight = false;
+              if(input && input.value.trim() === text) input.value = "";
             }
           }
         }, 2200);
