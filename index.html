@@ -9885,14 +9885,24 @@ function junoHandleQuickCommand(command){
         return true;
     }
 
-    const searchIntent = /\b(search|find|look for|look up)\b/i.test(lower);
-    const companyIntent = /\b(compan(?:y|ies)|employer|business(?:es)?|con compan(?:y|ies))\b/i.test(lower);
-    const jobIntent = /\b(job listings|job openings|vacanc(?:y|ies)|available jobs|hiring)\b/i.test(lower);
+    const searchIntent = /\b(search|find|look for|look up|what about|tell me about|show me|give me|list|name)\b/i.test(lower);
+    const companyIntent = /\b(compan(?:y|ies)|employer|business(?:es)?|aerospace|aircraft|aviation|manufacturer|manufacturing|factory|supplier)\b/i.test(lower);
+    const jobIntent = /\b(job listings|job openings|vacanc(?:y|ies)|available jobs|hiring|production jobs|operator jobs)\b/i.test(lower);
+    const companyQuestion = /\b(any|some|a|the)\s+(?:good\s+)?(?:company|companies|employer|business|aerospace|aircraft|aviation|manufacturer|factory|supplier)\b/i.test(lower);
 
-    if(searchIntent && (companyIntent || jobIntent)){
-        const reply = companyIntent
-            ? "COMPANY SEARCH REQUEST RECEIVED\n\nI can help organize a company search, but live web search is not connected in this portfolio demo. Please specify the industry and target location (city or country). I can then prepare search keywords and a company-research checklist. No companies or vacancies have been verified."
-            : "JOB SEARCH REQUEST RECEIVED\n\nLive job listings are not connected in this portfolio demo, so I cannot verify current vacancies. Specify the job title, industry and target location, and I can prepare targeted search terms and an application checklist.";
+    if((searchIntent && (companyIntent || jobIntent)) || (companyIntent && companyQuestion)){
+        let reply;
+        if(companyIntent){
+            const industry = /aerospace|aircraft|aviation/i.test(lower) ? "aerospace and aviation" :
+                /manufactur|factory|production/i.test(lower) ? "manufacturing and production" : "the industry you mentioned";
+            const location = /\bgermany|german\b/i.test(lower) ? "Germany" :
+                /\bcroatia|croatian\b/i.test(lower) ? "Croatia" :
+                /\buk|united kingdom|britain\b/i.test(lower) ? "the United Kingdom" :
+                /\bpoland|polish\b/i.test(lower) ? "Poland" : "your requested location";
+            reply = "COMPANY RESEARCH REQUEST RECEIVED\n\nI understood that you want to know about " + industry + " companies in " + location + ". Live web search is not connected in this JUNO portfolio demo, so I cannot verify company names, current hiring status or vacancies. I can still help you prepare a company-research checklist and identify what to verify, including official website, location, careers page and recruitment legitimacy.";
+        }else{
+            reply = "JOB SEARCH REQUEST RECEIVED\n\nLive job listings are not connected in this portfolio demo, so I cannot verify current vacancies. Specify the job title, industry and target location, and I can prepare targeted search terms and an application checklist.";
+        }
         addMessage("JUNO: " + reply, "juno");
         speakText(reply);
         return true;
