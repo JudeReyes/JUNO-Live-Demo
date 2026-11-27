@@ -9998,6 +9998,13 @@ function junoHandleQuickCommand(command){
         return true;
     }
 
+    const additionalReply = junoAdditionalIntentReply(raw);
+    if(additionalReply){
+        addMessage("JUNO: " + additionalReply, "juno");
+        speakText(additionalReply);
+        return true;
+    }
+
     return false;
 }
 
@@ -10012,6 +10019,9 @@ function junoOfflineDemoReply(command){
     const lower = text.toLowerCase();
     const mode = String(window.__junoActiveMode || "GENERAL").toUpperCase();
     const line = (value) => String(value || "").replace(/[<>]/g, "").trim();
+
+    const additionalReply = junoAdditionalIntentReply(text);
+    if(additionalReply) return additionalReply;
 
     if (/^(hi|hello|hey)( juno)?[.! ]*$/i.test(text)) {
         return "Hello! I'm JUNO, Jude's Neural Operations Assistant, designed and built by Jude Reyes. Choose a work mode or give me a task. I can demonstrate practical VA workflows, job-application preparation, interview coaching, automation planning, and client task organization.";
@@ -10311,7 +10321,8 @@ async function speakText(text){
     const humanoid = document.querySelector(".humanoid");
 
     const utterance = new SpeechSynthesisUtterance(cleaned);
-    utterance.lang = "en-US";
+    const hasFilipinoText = /\\b(kaya|mo|ba|bakit|hindi|di|tagalog|filipino|kumanta|kanta|wala|akong|pakialam|ayusin|trabaho|sino|ano|paano|pwede|puwede|salamat|kilala|ako)\\b/i.test(cleaned);
+    utterance.lang = hasFilipinoText ? "fil-PH" : "en-US";
     utterance.rate = 1;
     utterance.pitch = 0.95;
     utterance.volume = 1;
@@ -10337,24 +10348,26 @@ async function speakText(text){
 
     if(speechRunId !== junoSpeechRunId) return;
 
+    const filipinoVoices = voices.filter(voice => /^(fil|tl)([_-]|$)/i.test(voice.lang) || /filipino|tagalog/i.test(voice.name));
     const englishVoices = voices.filter(voice => /^en([_-]|$)/i.test(voice.lang));
     const femaleVoicePattern = /\b(zira|aria|jenny|michelle|samantha|victoria|karen|susan)\b/i;
 
     // JUNO voice priority: Microsoft Mark (US), Microsoft David (US),
     // then Google UK English Male. Only choose voices actually available.
-    let preferredVoice =
-        englishVoices.find(voice => /microsoft mark/i.test(voice.name)) ||
+    let preferredVoice = hasFilipinoText
+        ? (filipinoVoices[0] || null)
+        : englishVoices.find(voice => /microsoft mark/i.test(voice.name)) ||
         englishVoices.find(voice => /microsoft david/i.test(voice.name)) ||
         englishVoices.find(voice => /google uk english male/i.test(voice.name));
 
-    if(!preferredVoice){
+    if(!preferredVoice && !hasFilipinoText){
         preferredVoice = englishVoices.find(voice =>
             !femaleVoicePattern.test(voice.name) &&
             /microsoft|natural|neural/i.test(voice.name)
         );
     }
 
-    if(!preferredVoice){
+    if(!preferredVoice && !hasFilipinoText){
         preferredVoice = englishVoices.find(voice => /^en[-_]US/i.test(voice.lang))
             || englishVoices[0]
             || null;
