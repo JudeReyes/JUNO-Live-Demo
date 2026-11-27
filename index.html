@@ -9850,112 +9850,95 @@ function addMessage(text,type){
 
 
 /* =========================================================
+   GITHUB PAGES DEMO COMMAND FALLBACK
+   Real AI responses require a separately hosted backend.
+========================================================= */
+
+function junoOfflineDemoReply(command){
+    const text = String(command || "").trim();
+    const lower = text.toLowerCase();
+
+    if (/^(hi|hello|hey)( juno)?[.! ]*$/i.test(text)) {
+        return "Hello! I'm JUNO, your Neural Operations Assistant. My browser voice is now active. I can demonstrate the interface, but live AI command processing still needs a connected backend.";
+    }
+    if (lower.includes("help") || lower.includes("what can you do")) {
+        return "I can demonstrate the Work, Jobs, Interview Coach, Automation, and Client Tasks modes. For full AI analysis and document processing, this GitHub Pages demo needs its secure backend connection.";
+    }
+    return "I received your command: " + text + ". The voice output is working, but I cannot generate a full AI result while the live command server is disconnected. Connect JUNO to a hosted backend to enable intelligent responses.";
+}
+
+/* =========================================================
    COMMAND API
 ========================================================= */
 
 let junoCommandBusy=false;
 
 async function sendCommand(){
-
     if(junoCommandBusy) return;
+    const text = input.value.trim();
+    if(!text) return;
 
-    const text =
-        input.value.trim();
-
-    if(!text){
-
-        return;
-
-    }
-
-
-    addMessage(
-        "YOU: " + text,
-        "you"
-    );
-
-
+    addMessage("YOU: " + text, "you");
     input.value = "";
-    junoCommandBusy=true;
-
+    junoCommandBusy = true;
 
     try{
+        const response = await fetch("/api/command", {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+                command:text,
+                mode:window.__junoActiveMode || "WORK"
+            })
+        });
 
-        const response =
-            await fetch(
-                "/api/command",
-                {
+        if(!response.ok) throw new Error("Command HTTP " + response.status);
+        const data = await response.json();
+        if(!data || typeof data.response !== "string" || !data.response.trim()){
+            throw new Error("Invalid command response");
+        }
 
-                    method:"POST",
-
-                    headers:{
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body:
-                        JSON.stringify({
-                            command:text,
-                            mode:window.__junoActiveMode || "WORK"
-                        })
-
-                }
-            );
-
-
-        const data =
-            await response.json();
-
-
-        addMessage(
-            "JUNO: " +
-            data.response,
-            "juno"
-        );
-
-
-        speakText(
-            data.response
-        );
-
-
+        addMessage("JUNO: " + data.response, "juno");
+        await speakText(data.response);
     }catch(error){
-
-        addMessage(
-            "JUNO: Command connection failed.",
-            "juno"
-        );
-
-
-        console.log(
-            "COMMAND ERROR:",
-            error
-        );
-
+        console.log("COMMAND API UNAVAILABLE — USING DEMO MODE:", error);
+        const reply = junoOfflineDemoReply(text);
+        addMessage("JUNO: " + reply, "juno");
+        await speakText(reply);
     }finally{
-        junoCommandBusy=false;
+        junoCommandBusy = false;
     }
-
 }
-
-
 
 /* =========================================================
    VOICE COMMAND API
 ========================================================= */
 
 async function sendVoiceCommand(text){
-    const cleaned=String(text||"").trim();
+    const cleaned = String(text || "").trim();
     if(!cleaned) return;
+
     try{
-        const response=await fetch("/api/command",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({command:cleaned,mode:window.__junoActiveMode||"WORK"})});
-        if(!response.ok) throw new Error("Voice command HTTP "+response.status);
-        const data=await response.json();
-        addMessage("JUNO: "+data.response,"juno");
+        const response = await fetch("/api/command", {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+                command:cleaned,
+                mode:window.__junoActiveMode || "WORK"
+            })
+        });
+        if(!response.ok) throw new Error("Voice command HTTP " + response.status);
+        const data = await response.json();
+        if(!data || typeof data.response !== "string" || !data.response.trim()){
+            throw new Error("Invalid voice command response");
+        }
+        addMessage("JUNO: " + data.response, "juno");
         await speakText(data.response);
     }catch(error){
-        addMessage("JUNO: Voice connection failed.","juno");
-        console.log("VOICE COMMAND ERROR:",error);
+        console.log("VOICE COMMAND API UNAVAILABLE — USING DEMO MODE:", error);
+        const reply = junoOfflineDemoReply(cleaned);
+        addMessage("JUNO: " + reply, "juno");
+        await speakText(reply);
     }
 }
 
@@ -10008,53 +9991,85 @@ function speakJuno(){
 
 
 /* =========================================================
-   TEXT TO SPEECH BACKEND
+   BROWSER-NATIVE TEXT TO SPEECH
+   Works on GitHub Pages without a Flask /api/speak endpoint.
 ========================================================= */
 
-let junoCurrentAudio=null;
-let junoCancelAudio=null;
+let junoCurrentAudio = null;
+let junoCancelAudio = null;
+let junoSpeechUtterance = null;
+
 function stopCurrentJunoAudio(){
-    if(typeof junoCancelAudio==="function"){junoCancelAudio();junoCancelAudio=null;return;}
-    if(junoCurrentAudio){try{junoCurrentAudio.pause();}catch(e){}junoCurrentAudio=null;}
-}
-async function speakText(text){
-    const cleaned=String(text||"").trim();
-    if(!cleaned) return;
-    stopCurrentJunoAudio();
     try{
-        const response=await fetch("/api/speak",{method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify({text:cleaned})});
-        if(!response.ok) throw new Error("TTS HTTP "+response.status);
-        const blob=await response.blob();
-        const audioURL=URL.createObjectURL(blob);
-        const audio=new Audio(audioURL);
-        junoCurrentAudio=audio;
-        document.querySelector(".humanoid")?.classList.add("speaking");
-        document.getElementById("voiceDisplay")?.classList.add("voice-active");
-        document.getElementById("voiceText").textContent="TRANSMITTING";
-        await new Promise((resolve,reject)=>{
-            let finished=false;
-            const finish=(error)=>{
-                if(finished) return; finished=true;
-                if(junoCurrentAudio===audio) junoCurrentAudio=null;
-                junoCancelAudio=null;
-                try{audio.pause();}catch(e){}
-                audio.onended=null; audio.onerror=null; URL.revokeObjectURL(audioURL);
-                document.getElementById("voiceDisplay")?.classList.remove("voice-active");
-                document.getElementById("voiceText").textContent="STANDBY";
-                document.querySelector(".humanoid")?.classList.remove("speaking");
-                if(error) reject(error); else resolve();
-            };
-            junoCancelAudio=()=>finish();
-            audio.onended=()=>finish();
-            audio.onerror=()=>finish(new Error("Audio playback failed"));
-            audio.play().catch(finish);
-        });
-    }catch(error){
-        document.getElementById("voiceText").textContent="ERROR";
-        document.querySelector(".humanoid")?.classList.remove("speaking");
-        document.getElementById("voiceDisplay")?.classList.remove("voice-active");
-        console.log("VOICE ERROR:",error);
+        if(window.speechSynthesis) window.speechSynthesis.cancel();
+    }catch(error){}
+    junoSpeechUtterance = null;
+    junoCancelAudio = null;
+    if(junoCurrentAudio){
+        try{ junoCurrentAudio.pause(); }catch(error){}
+        junoCurrentAudio = null;
     }
+}
+
+async function speakText(text){
+    const cleaned = String(text || "").trim();
+    if(!cleaned) return;
+
+    if(!("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)){
+        const voiceText = document.getElementById("voiceText");
+        if(voiceText) voiceText.textContent = "VOICE NOT SUPPORTED";
+        console.warn("JUNO: Browser speech synthesis is not supported.");
+        return;
+    }
+
+    stopCurrentJunoAudio();
+
+    const voiceText = document.getElementById("voiceText");
+    const voiceDisplay = document.getElementById("voiceDisplay");
+    const humanoid = document.querySelector(".humanoid");
+
+    const utterance = new SpeechSynthesisUtterance(cleaned);
+    utterance.lang = "en-US";
+    utterance.rate = 1;
+    utterance.pitch = 0.95;
+    utterance.volume = 1;
+
+    const voices = window.speechSynthesis.getVoices();
+    const preferredVoice = voices.find(voice => /^en[-_]US/i.test(voice.lang))
+        || voices.find(voice => /^en/i.test(voice.lang));
+    if(preferredVoice) utterance.voice = preferredVoice;
+
+    junoSpeechUtterance = utterance;
+    if(voiceText) voiceText.textContent = "TRANSMITTING";
+    voiceDisplay?.classList.add("voice-active");
+    humanoid?.classList.add("speaking");
+    if(typeof window.setJunoHudState === "function") window.setJunoHudState("SPEAKING");
+
+    await new Promise(resolve => {
+        let finished = false;
+        const finish = () => {
+            if(finished) return;
+            finished = true;
+            if(junoSpeechUtterance === utterance) junoSpeechUtterance = null;
+            if(voiceText) voiceText.textContent = "STANDBY";
+            voiceDisplay?.classList.remove("voice-active");
+            humanoid?.classList.remove("speaking");
+            if(typeof window.setJunoHudState === "function") window.setJunoHudState("READY");
+            resolve();
+        };
+        utterance.onend = finish;
+        utterance.onerror = finish;
+        junoCancelAudio = () => {
+            try{ window.speechSynthesis.cancel(); }catch(error){}
+            finish();
+        };
+        try{
+            window.speechSynthesis.speak(utterance);
+        }catch(error){
+            console.error("JUNO BROWSER VOICE ERROR:", error);
+            finish();
+        }
+    });
 }
 
 
