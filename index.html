@@ -9870,25 +9870,18 @@ function junoHandleQuickCommand(command){
     if(openMatch){
         const site = openMatch[1].toLowerCase();
         const url = sites[site];
-        const message = document.createElement("div");
-        message.className = "message juno";
-        message.textContent = "JUNO: I found the " + site.toUpperCase() + " website. Select the link below to open it in a new tab.";
-        messages.appendChild(message);
 
-        const linkMessage = document.createElement("div");
-        linkMessage.className = "message juno";
-        const link = document.createElement("a");
-        link.href = url;
-        link.target = "_blank";
-        link.rel = "noopener noreferrer";
-        link.textContent = "OPEN " + site.toUpperCase();
-        link.style.color = "var(--cyan)";
-        link.style.textDecoration = "underline";
-        link.style.fontWeight = "700";
-        linkMessage.appendChild(link);
-        messages.appendChild(linkMessage);
-        messages.scrollTop = messages.scrollHeight;
-        speakText("I found " + site + ". Select the link in the command console to open it.");
+        addMessage("JUNO: Opening " + site.toUpperCase() + ".", "juno");
+        speakText("Opening " + site + ".");
+
+        // Try a new tab first. If the browser blocks the popup (common
+        // for voice-triggered commands), navigate this tab automatically.
+        const openedWindow = window.open(url, "_blank");
+        if(openedWindow){
+            try { openedWindow.opener = null; } catch(error) {}
+        }else{
+            window.location.assign(url);
+        }
         return true;
     }
 
