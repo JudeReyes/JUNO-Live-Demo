@@ -11056,14 +11056,15 @@ window.selectJunoMode=function(mode){ window.__junoActiveMode=mode; return _sele
     recognition.onresult = (event) => {
       let finalText = "";
       let interim = "";
-      for(let i = event.resultIndex; i < event.results.length; i++){
+      // Rebuild the full transcript so interim updates do not replace earlier words.
+      for(let i = 0; i < event.results.length; i++){
         const transcript = event.results[i][0].transcript.trim();
         if(!transcript) continue;
         if(event.results[i].isFinal) finalText += (finalText ? " " : "") + transcript;
         else interim += (interim ? " " : "") + transcript;
       }
       const commandBox = $("commandInput");
-      const recognizedText = (finalText || interim).trim();
+      const recognizedText = [finalText, interim].filter(Boolean).join(" ").trim();
       if(commandBox && recognizedText) commandBox.value = recognizedText;
       const vt = $("voiceText");
       if(vt) vt.textContent = finalText ? "TRANSCRIPT READY — AUTO-SENDING…" : (interim ? "HEARING: " + interim : "LISTENING");
@@ -11094,11 +11095,8 @@ window.selectJunoMode=function(mode){ window.__junoActiveMode=mode; return _sele
         commandBox.value = spokenCommand;
         lastTranscript = "";
         if(vt) vt.textContent = "SENDING VOICE COMMAND…";
-        setTimeout(() => {
-          if(!spokenCommand || junoCommandBusy) return;
-          if(commandBox.value.trim() === spokenCommand) commandBox.value = "";
-          if(typeof sendVoiceCommand === "function") sendVoiceCommand(spokenCommand);
-        }, 650);
+        if(commandBox.value.trim() === spokenCommand) commandBox.value = "";
+        if(typeof sendVoiceCommand === "function") sendVoiceCommand(spokenCommand);
       }else if(vt){
         vt.textContent = "STANDBY";
       }
