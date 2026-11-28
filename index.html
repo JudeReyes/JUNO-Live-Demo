@@ -10420,6 +10420,7 @@ function speakJuno(){
 ========================================================= */
 
 let junoCurrentAudio = null;
+let junoCurrentAudioUrl = null;
 let junoCancelAudio = null;
 let junoSpeechUtterance = null;
 
@@ -10439,20 +10440,9 @@ function stopCurrentJunoAudio(){
     junoSpeechUtterance = null;
     if(junoCurrentAudio){
         try{ junoCurrentAudio.pause(); }catch(error){}
-        junoCurrentAudio = null;
-    }
-}
-
-async function speakText(text){
+        juasync function speakText(text){
     const cleaned = junoPrepareSpeechText(text);
     if(!cleaned) return;
-
-    if(!("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)){
-        const voiceText = document.getElementById("voiceText");
-        if(voiceText) voiceText.textContent = "VOICE NOT SUPPORTED";
-        console.warn("JUNO: Browser speech synthesis is not supported.");
-        return;
-    }
 
     stopCurrentJunoAudio();
     const speechRunId = junoSpeechRunId;
@@ -10461,16 +10451,85 @@ async function speakText(text){
     const voiceDisplay = document.getElementById("voiceDisplay");
     const humanoid = document.querySelector(".humanoid");
 
+    // Prefer JUNO's dedicated Microsoft GuyNeural voice service.
+    // If the service is unavailable, retain browser speech as a fallback.
+    try{
+        const response = await fetch(
+            "https://juno-guyneural-voice.jude-reyes0618.workers.dev/api/speak",
+            {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ text: cleaned })
+            }
+        );
+
+        if(!response.ok){
+            throw new Error("GuyNeural service returned HTTP " + response.status);
+        }
+
+        const audioBlob = await response.blob();
+        if(speechRunId !== junoSpeechRunId) return;
+
+        junoCurrentAudioUrl = URL.createObjectURL(audioBlob);
+        const audio = new Audio(junoCurrentAudioUrl);
+        junoCurrentAudio = audio;
+
+        if(voiceText) voiceText.textContent = "TRANSMITTING";
+        voiceDisplay?.classList.add("voice-active");
+        humanoid?.classList.add("speaking");
+        if(typeof window.setJunoHudState === "function") window.setJunoHudState("SPEAKING");
+
+        await new Promise(resolve => {
+            let finished = false;
+            const finish = () => {
+                if(finished) return;
+                finished = true;
+                if(junoCurrentAudio === audio) junoCurrentAudio = null;
+                if(junoCurrentAudioUrl){
+                    try{ URL.revokeObjectURL(junoCurrentAudioUrl); }catch(error){}
+                    junoCurrentAudioUrl = null;
+                }
+                const isCurrentSpeech = speechRunId === junoSpeechRunId;
+                if(isCurrentSpeech){
+                    junoCancelAudio = null;
+                    if(voiceText) voiceText.textContent = "STANDBY";
+                    voiceDisplay?.classList.remove("voice-active");
+                    humanoid?.classList.remove("speaking");
+                    if(typeof window.setJunoHudState === "function") window.setJunoHudState("READY");
+                }
+                resolve();
+            };
+
+            audio.onended = finish;
+            audio.onerror = finish;
+            junoCancelAudio = () => {
+                try{ audio.pause(); }catch(error){}
+                finish();
+            };
+
+            audio.play().catch(error => {
+                console.warn("JUNO GUYNEURAL PLAYBACK ERROR:", error);
+                finish();
+            });
+        });
+        return;
+    }catch(error){
+        if(speechRunId !== junoSpeechRunId) return;
+        console.warn("JUNO GUYNEURAL SERVICE UNAVAILABLE; using browser voice fallback.", error);
+    }
+
+    if(!("speechSynthesis" in window) || !("SpeechSynthesisUtterance" in window)){
+        if(voiceText) voiceText.textContent = "VOICE NOT SUPPORTED";
+        console.warn("JUNO: Neither GuyNeural audio nor browser speech is available.");
+        return;
+    }
+
     const utterance = new SpeechSynthesisUtterance(cleaned);
-    // JUNO uses English speech only. Keep the language and voice stable.
     utterance.lang = "en-US";
     utterance.rate = 0.94;
     utterance.pitch = 1;
     utterance.volume = 1;
 
-    // Prefer the most natural English voice exposed by the browser/OS.
-    // Edge may expose Microsoft Online Natural voices; otherwise use the
-    // best available English voice without switching between speakers.
     let voices = window.speechSynthesis.getVoices();
 
     if(!voices.length){
@@ -10492,11 +10551,10 @@ async function speakText(text){
 
     const englishVoices = voices.filter(voice => /^en([_-]|$)/i.test(voice.lang));
     const naturalVoicePattern = /online.*natural|natural.*online|neural|natural/i;
-
-    let preferredVoice =
+    const preferredVoice =
+        englishVoices.find(voice => /Microsoft Guy Online|GuyNeural/i.test(voice.name)) ||
         englishVoices.find(voice => naturalVoicePattern.test(voice.name)) ||
         englishVoices.find(voice => /google.*english|english.*google/i.test(voice.name)) ||
-        englishVoices.find(voice => /microsoft.*(aria|jenny|guy|ryan|jane)/i.test(voice.name)) ||
         englishVoices.find(voice => /^en[-_]US/i.test(voice.lang)) ||
         englishVoices[0] ||
         null;
@@ -10537,6 +10595,12 @@ async function speakText(text){
         };
         try{
             window.speechSynthesis.speak(utterance);
+        }catch(error){
+            console.error("JUNO BROWSER VOICE ERROR:", error);
+            finish();
+        }
+    });
+}   window.speechSynthesis.speak(utterance);
         }catch(error){
             console.error("JUNO BROWSER VOICE ERROR:", error);
             finish();
