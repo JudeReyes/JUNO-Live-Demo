@@ -10274,17 +10274,23 @@ function junoCleanAssistantText(value){
 
 function junoPrepareSpeechText(value){
     return junoCleanAssistantText(value)
+        // Remove visual Markdown without flattening the assistant's paragraphs.
         .replace(/^\s{0,3}#{1,6}\s*/gm, "")
         .replace(/^\s*[-*•]\s+/gm, "")
         .replace(/[ *_~]/g, "")
         .replace(new RegExp(String.fromCharCode(96), "g"), "")
+        // Speak common short forms as words instead of spelling every letter.
+        .replace(/\bJUNO\b/gi, "Juno")
+        .replace(/\bAI\b/g, "artificial intelligence")
+        .replace(/\bASAP\b/gi, "as soon as possible")
+        .replace(/\bFAQ\b/gi, "frequently asked questions")
         // A slash is formatting, not something JUNO should pronounce.
         .replace(/\s*\/\s*/g, ", ")
         .replace(/\.{2,}/g, ". ")
         .replace(/\s+([,!?;:])/g, "$1")
-        .replace(/\bJUNO\b/g, "Juno")
-        .replace(/\b[A-Z]{3,}\b/g, word => word.toLowerCase())
-        .replace(/\s+/g, " ")
+        .replace(/[ \t]+/g, " ")
+        .replace(/\n[ \t]+/g, "\n")
+        .replace(/\n{3,}/g, "\n\n")
         .trim();
 }
 
