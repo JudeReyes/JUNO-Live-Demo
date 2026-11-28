@@ -19,7 +19,14 @@ npm install
 npm run deploy
 ```
 
-Or connect this GitHub repository to Cloudflare Workers Builds and set the project root to `cloudflare-voice-worker`, with install command `npm install` and deploy command `npm run deploy`.
+Or use Cloudflare's Git integration:
+
+1. In Cloudflare, go to **Workers & Pages → Create application → GitHub**.
+2. Select `JudeReyes/JUNO-Live-Demo` and the branch `feat/guyneural-cloudflare-voice`.
+3. Set the Worker name to `juno-guyneural-voice` (it must match `wrangler.toml`).
+4. Set the root directory to `cloudflare-voice-worker`.
+5. Leave the build command blank and set the deploy command to `npm run deploy`.
+6. Save and deploy. Cloudflare Workers Builds uses the Wrangler version in `package.json`.
 
 The resulting Worker URL will be used by the JUNO frontend as `https://YOUR-WORKER.workers.dev/api/speak`.
 
