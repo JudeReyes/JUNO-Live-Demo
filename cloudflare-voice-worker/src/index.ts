@@ -2,14 +2,15 @@ import { handleTTS } from "./server/ttsHandler";
 import { corsHeadersFor, forbiddenResponse } from "./server/originGuard";
 
 export default {
-  async fetch(request: Request, env: unknown, ctx: ExecutionContext): Promise<Response> {
+  async fetch(request: Request, env: unknown, ctx: Parameters<typeof handleTTS>[2]): Promise<Response> {
     const url = new URL(request.url);
 
     if (url.pathname === "/health") {
-      const cors = corsHeadersFor(request);
-      if (!cors) return forbiddenResponse();
+      const origin = request.headers.get("Origin");
+      const cors = origin ? corsHeadersFor(request) : {};
+      if (origin && !cors) return forbiddenResponse();
       if (request.method !== "GET" && request.method !== "HEAD") {
-        return new Response("Method Not Allowed", { status: 405, headers: { Allow: "GET, HEAD, OPTIONS", ...cors } });
+        return new Response("Method Not Allowed", { status: 405, headers: { Allow: "GET, HEAD", ...cors } });
       }
       return new Response(request.method === "HEAD" ? null : JSON.stringify({
         ok: true,
