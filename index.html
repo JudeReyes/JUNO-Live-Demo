@@ -10190,7 +10190,7 @@ async function junoRequestAI(text){
         {
             role:"system",
             content:"JUNO CLIENT CONTEXT (trusted browser-provided data): " + clientContext +
-                "\nUse this exact local date, time and IANA timezone when answering questions about the viewer's current time. Never guess a time. The timezone is not proof of the viewer's precise location or nationality. Only refer to GPS coordinates if the viewer explicitly granted location permission; coordinates are not an exact street address. If no location permission is present, say that precise location has not been shared. Do not claim that Gemini is the active model.\nVOICE AND STYLE: Do not use emojis, emoticons, emoji shortcodes, or decorative symbols in replies. Use clear, natural conversational language. When the user writes in Filipino or Taglish, answer in natural Filipino/Taglish and use ordinary words, not letter-by-letter spellings."
+                "\nUse this exact local date, time and IANA timezone when answering questions about the viewer's current time. Never guess a time. The timezone is not proof of the viewer's precise location or nationality. Only refer to GPS coordinates if the viewer explicitly granted location permission; coordinates are not an exact street address. If no location permission is present, say that precise location has not been shared. Do not claim that Gemini is the active model.\nVOICE AND STYLE: Use English for all replies and spoken output unless the user explicitly requests another language. Do not switch into Filipino or Tagalog by default. Do not use emojis, emoticons, emoji shortcodes, or decorative symbols. Use clear, natural conversational language with complete sentences."
         },
         ...junoConversationHistory.slice(-10),
         { role:"user", content:modeContext }
@@ -10278,6 +10278,10 @@ function junoPrepareSpeechText(value){
         .replace(/^\s*[-*•]\s+/gm, "")
         .replace(/[ *_~]/g, "")
         .replace(new RegExp(String.fromCharCode(96), "g"), "")
+        // A slash is formatting, not something JUNO should pronounce.
+        .replace(/\s*\/\s*/g, ", ")
+        .replace(/\.{2,}/g, ". ")
+        .replace(/\s+([,!?;:])/g, "$1")
         .replace(/\bJUNO\b/g, "Juno")
         .replace(/\b[A-Z]{3,}\b/g, word => word.toLowerCase())
         .replace(/\s+/g, " ")
@@ -10458,15 +10462,15 @@ async function speakText(text){
     const humanoid = document.querySelector(".humanoid");
 
     const utterance = new SpeechSynthesisUtterance(cleaned);
-    const filipinoWords = /\b(ako|ikaw|siya|kami|tayo|kayo|sila|ko|mo|niya|namin|natin|ninyo|nila|ang|ng|mga|sa|para|kay|kina|ito|iyan|iyon|dito|diyan|doon|ano|sino|saan|kailan|bakit|paano|alin|ilan|ba|naman|kasi|dahil|pero|ngunit|hindi|di|wala|meron|mayroon|talaga|siguro|sige|opo|oo|huwag|wag|paki|pakiusap|salamat|kumusta|mahal|gusto|ayaw|pwede|puwede|kailangan|trabaho|bahay|oras|ngayon|kanina|mamaya|bukas|kahapon|maganda|mabuti|tama|mali|tulong|gawin|tingnan|sabihin|ulit|lang|nating|kong|mong|yung|yan|yun)\b/i;
-    const hasFilipinoText = filipinoWords.test(cleaned) || /\b(ano na|anong oras|kamusta ka|maraming salamat|mahal kita|hindi ko|pwede ba|pakiusap lang)\b/i.test(cleaned);
-    utterance.lang = hasFilipinoText ? "fil-PH" : "en-US";
-    utterance.rate = hasFilipinoText ? 0.92 : 1;
-    utterance.pitch = hasFilipinoText ? 1 : 0.95;
+    // JUNO uses English speech only. Keep the language and voice stable.
+    utterance.lang = "en-US";
+    utterance.rate = 0.94;
+    utterance.pitch = 1;
     utterance.volume = 1;
 
-    // Prefer an available English male voice while keeping browser-native TTS.
-    // Voice names vary by Windows version and installed speech packs.
+    // Prefer the most natural English voice exposed by the browser/OS.
+    // Edge may expose Microsoft Online Natural voices; otherwise use the
+    // best available English voice without switching between speakers.
     let voices = window.speechSynthesis.getVoices();
 
     if(!voices.length){
@@ -10480,44 +10484,27 @@ async function speakText(text){
             };
             const onVoicesChanged = () => finish();
             window.speechSynthesis.addEventListener("voiceschanged", onVoicesChanged);
-            setTimeout(finish, 900);
+            setTimeout(finish, 1200);
         });
     }
 
     if(speechRunId !== junoSpeechRunId) return;
 
-    const filipinoVoices = voices.filter(voice => /^(fil|tl)([_-]|$)/i.test(voice.lang) || /filipino|tagalog/i.test(voice.name));
     const englishVoices = voices.filter(voice => /^en([_-]|$)/i.test(voice.lang));
-    const femaleVoicePattern = /\b(zira|aria|jenny|michelle|samantha|victoria|karen|susan)\b/i;
+    const naturalVoicePattern = /online.*natural|natural.*online|neural|natural/i;
 
-    // JUNO voice priority: Microsoft Mark (US), Microsoft David (US),
-    // then Google UK English Male. Only choose voices actually available.
-    let preferredVoice = hasFilipinoText
-        ? (filipinoVoices[0] || null)
-        : englishVoices.find(voice => /microsoft mark/i.test(voice.name)) ||
-        englishVoices.find(voice => /microsoft david/i.test(voice.name)) ||
-        englishVoices.find(voice => /google uk english male/i.test(voice.name));
-
-    if(!preferredVoice && !hasFilipinoText){
-        preferredVoice = englishVoices.find(voice =>
-            !femaleVoicePattern.test(voice.name) &&
-            /microsoft|natural|neural/i.test(voice.name)
-        );
-    }
-
-    if(!preferredVoice && !hasFilipinoText){
-        preferredVoice = englishVoices.find(voice => /^en[-_]US/i.test(voice.lang))
-            || englishVoices[0]
-            || null;
-    }
+    let preferredVoice =
+        englishVoices.find(voice => naturalVoicePattern.test(voice.name)) ||
+        englishVoices.find(voice => /google.*english|english.*google/i.test(voice.name)) ||
+        englishVoices.find(voice => /microsoft.*(aria|jenny|guy|ryan|jane)/i.test(voice.name)) ||
+        englishVoices.find(voice => /^en[-_]US/i.test(voice.lang)) ||
+        englishVoices[0] ||
+        null;
 
     if(preferredVoice){
         utterance.voice = preferredVoice;
-        if(hasFilipinoText) utterance.lang = preferredVoice.lang || "fil-PH";
+        utterance.lang = preferredVoice.lang || "en-US";
     }
-    // Never force an English voice onto Filipino text. If no Filipino/Tagalog
-    // voice is installed, let the browser resolve the Filipino language tag.
-    if(hasFilipinoText && !preferredVoice) utterance.lang = "fil-PH";
 
     junoSpeechUtterance = utterance;
     if(voiceText) voiceText.textContent = "TRANSMITTING";
