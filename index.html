@@ -10279,11 +10279,13 @@ function junoPrepareSpeechText(value){
         .replace(/^\s*[-*•]\s+/gm, "")
         .replace(/[ *_~]/g, "")
         .replace(new RegExp(String.fromCharCode(96), "g"), "")
-        // Speak common short forms as words instead of spelling every letter.
+        // Expand known abbreviations before normalizing all-caps words.
         .replace(/\bJUNO\b/gi, "Juno")
-        .replace(/\bAI\b/g, "artificial intelligence")
+        .replace(/\bAI\b/gi, "artificial intelligence")
         .replace(/\bASAP\b/gi, "as soon as possible")
         .replace(/\bFAQ\b/gi, "frequently asked questions")
+        // Prevent ordinary ALL-CAPS words (GIVE, THE, KIND) from being spelled letter by letter.
+        .replace(/\b[A-Z]{2,}\b/g, word => word.toLowerCase())
         // A slash is formatting, not something JUNO should pronounce.
         .replace(/\s*\/\s*/g, ", ")
         .replace(/\.{2,}/g, ". ")
