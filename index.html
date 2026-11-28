@@ -10468,7 +10468,7 @@ async function speakText(text){
     const humanoid = document.querySelector(".humanoid");
 
     // Split into sentence-sized requests so GuyNeural can start speaking sooner.
-    const sentences = cleaned.match(/[^.!?]+(?:[.!?]+["')\\]]*|$)/g) || [cleaned];
+    const sentences = cleaned.match(/[^.!?]+[.!?]+|[^.!?]+$/g) || [cleaned];
     const chunks = [];
     let pending = "";
     sentences.forEach(sentence => {
