@@ -10277,7 +10277,7 @@ function junoPrepareSpeechText(value){
         // Remove visual Markdown without flattening the assistant's paragraphs.
         .replace(/^\s{0,3}#{1,6}\s*/gm, "")
         .replace(/^\s*[-*•]\s+/gm, "")
-        .replace(/[ *_~]/g, "")
+       .replace(/[*_~]/g, "")
         .replace(new RegExp(String.fromCharCode(96), "g"), "")
         // Expand known abbreviations before normalizing all-caps words.
         .replace(/\bJUNO\b/gi, "Juno")
